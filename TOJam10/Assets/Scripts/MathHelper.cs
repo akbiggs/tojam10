@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEditor.AnimatedValues;
 using UnityEngine;
 
 public static class MathHelper {
@@ -132,4 +133,9 @@ public static class MathHelper {
 	public static Vector3 SmoothStep(Vector3 a, Vector3 b, float t) {
 		return new Vector3(Mathf.SmoothStep(a.x, b.x, t), Mathf.SmoothStep(a.y, b.y, t), Mathf.SmoothStep(a.z, b.z, t));
 	}
+
+    public static bool ApproximatelyEquals(this float f, float f2)
+    {
+        return Math.Abs(f - f2) <= float.Epsilon;
+    }
 }

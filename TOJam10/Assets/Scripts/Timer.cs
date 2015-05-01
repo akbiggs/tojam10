@@ -74,7 +74,7 @@ public class Timer
         }
     }
 
-    public static Timer Register(float duration, Action onComplete, bool isLooped, bool useRealTime)
+    public static Timer Register(float duration, Action onComplete, bool isLooped = false, bool useRealTime = true)
     {
         Timer timer = new Timer(duration, onComplete, isLooped, useRealTime);
         Timer.timersToAdd.Add(timer);

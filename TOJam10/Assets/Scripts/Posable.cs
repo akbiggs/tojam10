@@ -1,10 +1,14 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using System.Collections.Specialized;
+using Random = UnityEngine.Random;
 
 public enum PosableState 
 {
     Posing,
     Wandering,
+    Idle,
     Bored,
     LayingDown,
     Helpless
@@ -22,15 +26,24 @@ public class Posable : MonoBehaviour
     private PosableState state;
     private PoseAnimation poseAnimation;
 
+    private new Rigidbody rigidbody;
+
     private Vector3 wanderDirection;
+    public float wanderSpeed;
+    public float wanderTime;
+
+    public float idleTime;
 
     public void Start()
     {
+        this.rigidbody = this.GetComponent<Rigidbody>();
+
         this.Wander();
     }
 
     public void Update()
     {
+        Debug.Log("Current state: " + this.state.ToString().ToUpper());
         switch (this.state)
         {
             case PosableState.Helpless:
@@ -38,14 +51,34 @@ public class Posable : MonoBehaviour
                 break;
 
             case PosableState.Wandering:
-                this.transform.position += this.wanderDirection;
+                this.rigidbody.velocity = Vector3.zero;
+                this.rigidbody.AddForceAtPosition(this.wanderDirection*this.wanderSpeed, this.transform.position);
                 break;
         }
     }
 
-    public void EnterState(PosableState state)
+    public void EnterState(PosableState state, float duration = -1)
     {
         this.state = state;
+
+        if (!duration.ApproximatelyEquals(-1))
+        {
+            Timer.Register(duration, this.GoToNextState);
+        }
+    }
+
+    private void GoToNextState()
+    {
+        switch (this.state)
+        {
+            case PosableState.Wandering:
+                this.Idle();
+                break;
+
+            case PosableState.Idle:
+                this.Wander();
+                break;
+        }
     }
 
     public void Pose(PoseAnimation anim)
@@ -62,8 +95,14 @@ public class Posable : MonoBehaviour
 
     public void Wander()
     {
-        this.wanderDirection = Random.insideUnitSphere.SetY(0);
+        Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
+        this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
 
-        this.EnterState(PosableState.Wandering);
+        this.EnterState(PosableState.Wandering, duration: this.wanderTime);
+    }
+
+    public void Idle()
+    {
+        this.EnterState(PosableState.Idle, duration: this.idleTime);
     }
 }

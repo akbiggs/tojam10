@@ -1,15 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LevelController : MonoBehaviour {
+public class LevelController : MonoBehaviour
+{
+    public static LevelController instance;
 
-	// Use this for initialization
-	void Start () {
-	
-	}
-	
+    public virtual void Awake()
+    {
+        LevelController.instance = this;
+    }
+
 	// Update is called once per frame
 	void Update () {
-	
+        Timer.UpdateAllRegisteredTimers();
 	}
 }
