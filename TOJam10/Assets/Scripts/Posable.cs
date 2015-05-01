@@ -158,7 +158,7 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y * 2 + 0.1f);
+        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y * 4 + 0.1f);
     }
 
     private float getNewPoseTime()
