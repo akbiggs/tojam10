@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
         }
         else if (Input.GetMouseButton(0) && this.heldTossable != null)
         {
+            heldTossable.GetComponent<Rigidbody>().velocity = Vector3.zero;
             Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
             Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
