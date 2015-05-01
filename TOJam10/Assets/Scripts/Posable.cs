@@ -33,7 +33,8 @@ public class Posable : Tossable
     public float wanderTime;
 
     public float idleTime;
-
+    public float posMinTime; //How long this person who still posed for at a minimum
+    public float posMaxTime; //How long this person will stay posed for at a maximum.
     private Timer stateTimer;
 
     public override void Start()
@@ -69,11 +70,13 @@ public class Posable : Tossable
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection*this.wanderSpeed, this.transform.position);
                 break;
-
+            case PosableState.Posing:
+                this.transform.Rotate(Vector3.up, 10);
+                break;
         }
     }
 
-    public void EnterState(PosableState state, float duration = -1)
+    private void EnterState(PosableState state, float duration = -1)
     {
         if (this.stateTimer != null)
         {
@@ -108,14 +111,19 @@ public class Posable : Tossable
                 this.Wander();
 
                 break;
+
+            default:
+                this.Wander();
+                break;
         }
     }
 
     public void Pose(PoseAnimation anim)
     {
+        Debug.Log("Starting to pose.");
         this.poseAnimation = anim;
 
-        this.EnterState(PosableState.Posing);
+        this.EnterState(PosableState.Posing, this.getNewPoseTime());
     }
 
     public void BecomeHelpless(Vector3 mousePosition)
@@ -151,5 +159,10 @@ public class Posable : Tossable
     public bool IsGrounded()
     {
         return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y * 2 + 0.1f);
+    }
+
+    private float getNewPoseTime()
+    {
+        return Random.Range(this.posMinTime, this.posMaxTime);
     }
 }
