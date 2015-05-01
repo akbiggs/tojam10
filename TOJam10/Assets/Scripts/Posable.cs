@@ -19,14 +19,12 @@ public enum PoseAnimation
     Flattered
 }
 
-public class Posable : MonoBehaviour
+public class Posable : Tossable
 {
     public float rotationSpeed = 0.1f;
 
     private PosableState state;
     private PoseAnimation poseAnimation;
-
-    private new Rigidbody rigidbody;
 
     private Vector3 wanderDirection;
     public float wanderSpeed;
@@ -34,16 +32,17 @@ public class Posable : MonoBehaviour
 
     public float idleTime;
 
-    public void Start()
+    public override void Start()
     {
-        this.rigidbody = this.GetComponent<Rigidbody>();
+        base.Start();
 
         this.Wander();
     }
 
     public void Update()
     {
-        Debug.Log("Current state: " + this.state.ToString().ToUpper());
+        //Debug.Log("Current state: " + this.state.ToString().ToUpper());
+
         switch (this.state)
         {
             case PosableState.Helpless:
@@ -104,5 +103,15 @@ public class Posable : MonoBehaviour
     public void Idle()
     {
         this.EnterState(PosableState.Idle, duration: this.idleTime);
+    }
+
+    public override void GetPickedUp(Vector3 mousePos)
+    {
+        this.BecomeHelpless(mousePos);
+    }
+
+    public override void GetTossed(Vector3 dirAndSpeed)
+    {
+        base.GetTossed(dirAndSpeed);
     }
 }

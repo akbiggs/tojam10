@@ -134,8 +134,22 @@ public static class MathHelper {
 		return new Vector3(Mathf.SmoothStep(a.x, b.x, t), Mathf.SmoothStep(a.y, b.y, t), Mathf.SmoothStep(a.z, b.z, t));
 	}
 
+
     public static bool ApproximatelyEquals(this float f, float f2)
     {
         return Math.Abs(f - f2) <= float.Epsilon;
+    }
+
+    public static Vector3 Clamp(this Vector3 v, Vector3 min, Vector3 max)
+    {
+        return v
+            .SetX(Mathf.Clamp(v.x, min.x, max.x))
+            .SetY(Mathf.Clamp(v.y, min.y, max.y))
+            .SetZ(Mathf.Clamp(v.z, min.z, max.z));
+    }
+
+    public static Vector3 Clamp01(this Vector3 v)
+    {
+        return v.Clamp(Vector3.zero, Vector3.one);
     }
 }

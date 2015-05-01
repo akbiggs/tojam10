@@ -1,15 +1,90 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
+    public static Player instance;
 
-	// Use this for initialization
-	void Start () {
-	
+    private Vector3 previousHeldPosition;
+    private Vector3 currentHeldPosition;
+
+    private Vector3 previousMousePosition;
+    private Vector3 currentMousePosition;
+
+    private Tossable heldTossable;
+    private Vector3 offsetBetweenMouseAndHeldCenter;
+
+    public BoxCollider screenToWorldMap;
+
+    void Awake()
+    {
+        Player.instance = this;
+
+        this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
+    }
+
+	void Update()
+	{
+	    this.previousMousePosition = this.currentMousePosition;
+	    this.currentMousePosition = Input.mousePosition;
+
+	    if (Input.GetMouseButtonDown(0))
+	    {
+	        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+	        RaycastHit hitInfo;
+	        if (Physics.Raycast(cameraRay, out hitInfo))
+	        {
+	            Tossable tossable = hitInfo.transform.GetComponent<Tossable>();
+
+	            if (tossable != null)
+	            {
+	                this.PickUp(tossable);
+	            }
+	        }
+        }
+        else if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
+        {
+            this.TossHeldObject();
+        }
+        else if (Input.GetMouseButton(0) && this.heldTossable != null)
+        {
+            Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
+            Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
+
+            this.heldTossable.transform.position += currentMouseWorldPos - previousMouseWorldPos;
+
+            this.previousHeldPosition = this.currentHeldPosition;
+            this.currentHeldPosition = this.heldTossable.transform.position;
+        }
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    private Vector3 GetMouseWorldPosition(Vector3 mousePosition)
+    {
+        Vector3 mouseViewportPos = Camera.main.ScreenToViewportPoint(mousePosition).Clamp01();
+
+        float xMin = this.screenToWorldMap.transform.position.x + this.screenToWorldMap.bounds.extents.x;
+        float xMax = this.screenToWorldMap.transform.position.x - this.screenToWorldMap.bounds.extents.x;
+        float zMin = this.screenToWorldMap.transform.position.z - this.screenToWorldMap.bounds.extents.z;
+        float zMax = this.screenToWorldMap.transform.position.z + this.screenToWorldMap.bounds.extents.z;
+
+        return new Vector3(
+            Mathf.Lerp(xMin, xMax, mouseViewportPos.y),
+            this.screenToWorldMap.transform.position.y, 
+            Mathf.Lerp(zMin, zMax, mouseViewportPos.x));
+    }
+
+    private void PickUp(Tossable tossable)
+    {
+        this.heldTossable = tossable;
+        this.heldTossable.GetPickedUp(Input.mousePosition);
+
+        this.offsetBetweenMouseAndHeldCenter = this.heldTossable.transform.position - this.currentHeldPosition;
+    }
+
+    private void TossHeldObject()
+    {
+        this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
+        this.heldTossable = null;
+    }
 }
