@@ -21,6 +21,8 @@ public enum PoseAnimation
 
 public class Posable : Tossable
 {
+    protected new BoxCollider collider;
+
     public float rotationSpeed = 0.1f;
 
     private PosableState state;
@@ -32,10 +34,13 @@ public class Posable : Tossable
 
     public float idleTime;
 
+    private Timer stateTimer;
+
     public override void Start()
     {
         base.Start();
 
+        this.collider = this.GetComponent<BoxCollider>();
         this.Wander();
     }
 
@@ -46,23 +51,41 @@ public class Posable : Tossable
         switch (this.state)
         {
             case PosableState.Helpless:
-                this.transform.Rotate(Vector3.up, this.rotationSpeed);
+                if (this.IsGrounded() && this.stateTimer == null)
+                {
+                    this.stateTimer = Timer.Register(1f, this.GoToNextState);
+                    Debug.Log("I hit the ground");
+                }
+                else if (!this.IsGrounded() && this.stateTimer != null)
+                {
+                    this.stateTimer.Cancel();
+                    this.stateTimer = null;
+                    Debug.Log("I left the ground");
+                }
+
                 break;
 
             case PosableState.Wandering:
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection*this.wanderSpeed, this.transform.position);
                 break;
+
         }
     }
 
     public void EnterState(PosableState state, float duration = -1)
     {
+        if (this.stateTimer != null)
+        {
+            this.stateTimer.Cancel();
+            this.stateTimer = null;
+        }
+
         this.state = state;
 
         if (!duration.ApproximatelyEquals(-1))
         {
-            Timer.Register(duration, this.GoToNextState);
+            this.stateTimer = Timer.Register(duration, this.GoToNextState);
         }
     }
 
@@ -77,6 +100,14 @@ public class Posable : Tossable
             case PosableState.Idle:
                 this.Wander();
                 break;
+
+            case PosableState.Helpless:
+                this.rigidbody.rotation = Quaternion.Euler(Vector3.zero);
+                this.rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
+
+                this.Wander();
+
+                break;
         }
     }
 
@@ -89,6 +120,8 @@ public class Posable : Tossable
 
     public void BecomeHelpless(Vector3 mousePosition)
     {
+        this.rigidbody.velocity = Vector3.zero;
+
         this.EnterState(PosableState.Helpless);
     }
 
@@ -113,5 +146,10 @@ public class Posable : Tossable
     public override void GetTossed(Vector3 dirAndSpeed)
     {
         base.GetTossed(dirAndSpeed);
+    }
+
+    public bool IsGrounded()
+    {
+        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y * 2 + 0.1f);
     }
 }

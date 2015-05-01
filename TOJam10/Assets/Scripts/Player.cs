@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private Vector3 currentMousePosition;
 
     private Tossable heldTossable;
-    private Vector3 offsetBetweenMouseAndHeldCenter;
+    public float holdHeight;
 
     public BoxCollider screenToWorldMap;
 
@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
             Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
             this.heldTossable.transform.position += currentMouseWorldPos - previousMouseWorldPos;
+            this.heldTossable.transform.position = this.heldTossable.transform.position.SetY(this.holdHeight);
 
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
@@ -79,12 +80,13 @@ public class Player : MonoBehaviour
         this.heldTossable = tossable;
         this.heldTossable.GetPickedUp(Input.mousePosition);
 
-        this.offsetBetweenMouseAndHeldCenter = this.heldTossable.transform.position - this.currentHeldPosition;
+        Cursor.visible = false;
     }
 
     private void TossHeldObject()
     {
         this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
         this.heldTossable = null;
+        Cursor.visible = true;
     }
 }
