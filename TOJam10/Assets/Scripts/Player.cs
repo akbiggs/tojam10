@@ -49,6 +49,7 @@ public class Player : MonoBehaviour
         }
         else if (Input.GetMouseButton(0) && this.heldTossable != null)
         {
+            this.heldTossable.GetComponent<Rigidbody>().velocity = Vector3.zero;
             Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
             Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
@@ -57,6 +58,9 @@ public class Player : MonoBehaviour
 
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
+        }
+        else if (Input.GetKey(KeyCode.Space)) {
+            this.snapPhoto();
         }
 	}
 
@@ -88,5 +92,10 @@ public class Player : MonoBehaviour
         this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
         this.heldTossable = null;
         Cursor.visible = true;
+    }
+
+    private void snapPhoto()
+    {
+
     }
 }
