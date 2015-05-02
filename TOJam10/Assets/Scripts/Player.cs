@@ -2,6 +2,13 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
+public enum PlayerState
+{
+    Playing,
+    TakingPhoto,
+    ReviewingPhoto
+}
+
 public class Player : MonoBehaviour
 {
     public static Player instance;
@@ -25,6 +32,8 @@ public class Player : MonoBehaviour
     public Camera snapCamera;
     public Animator takePhotoAnimator;
 
+    private PlayerState state;
+
     void Awake()
     {
         Player.instance = this;
@@ -32,6 +41,8 @@ public class Player : MonoBehaviour
         this.flashTimer = 0;
 
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
+
+        this.state = PlayerState.Playing;
     }
 
     void Update()
@@ -81,26 +92,48 @@ public class Player : MonoBehaviour
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
-        else if (Input.GetKeyDown(KeyCode.Space)) {
-            Debug.Log("SNAP PHOTO");
-            this.snapPhoto();
-        }
 
-        if (this.flashTimer <= 0)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            foreach (Lamp lamp in this.lamps)
+            Debug.Log("When space was pressed, state was: " + this.state);
+            if (this.state == PlayerState.Playing)
             {
-                lamp.light.enabled = false;
+                Debug.Log("SNAP PHOTO");
+                this.SnapPhoto();
+            }
+            else
+            {
+                this.takePhotoAnimator.gameObject.SetActive(false);
+                //this.takePhotoAnimator.SetBool("closePhoto", true);
+                //TODO: exit animation
+                this.state = PlayerState.Playing;
+                Debug.Log("Returning state to : " + this.state);
             }
         }
-        else 
-        {
-            if (this.flashTimer < this.lengthOfFlash - 0.09)
-            {
-                this.snapCamera.enabled = false;
-            }
 
-            this.flashTimer -= Time.deltaTime;
+
+        if (this.state == PlayerState.TakingPhoto)
+        {
+            if (this.flashTimer <= 0)
+            {
+                //Turn off the flash.
+                foreach (Lamp lamp in this.lamps)
+                {
+                    lamp.light.enabled = false;
+                }
+
+                this.state = PlayerState.ReviewingPhoto;
+            }
+            else
+            {
+                if (this.flashTimer < this.lengthOfFlash - 0.09)
+                {
+                    //Actually "take the photo" ie disable the Unity snap camera so that the texture stops updating.
+                    this.snapCamera.enabled = false;
+                }
+
+                this.flashTimer -= Time.deltaTime;
+            }
         }
 	}
 
@@ -133,7 +166,7 @@ public class Player : MonoBehaviour
         this.heldTossable = null;
     }
 
-    private void snapPhoto()
+    private void SnapPhoto()
     {
         //Do the flash.
         foreach (Lamp lamp in this.lamps) {
@@ -143,5 +176,7 @@ public class Player : MonoBehaviour
         this.takePhotoAnimator.gameObject.SetActive(true);
 
         this.flashTimer = this.lengthOfFlash;
+
+        this.state = PlayerState.TakingPhoto;
     }
 }
