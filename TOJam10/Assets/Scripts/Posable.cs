@@ -32,9 +32,11 @@ public class Posable : Tossable
     public float wanderSpeed;
     public float wanderTime;
 
+    public Target posingTarget;
+
     public float idleTime;
-    public float posMinTime; //How long this person who still posed for at a minimum
-    public float posMaxTime; //How long this person will stay posed for at a maximum.
+    public float poseMinTime; //How long this person who still posed for at a minimum
+    public float poseMaxTime; //How long this person will stay posed for at a maximum.
     private Timer stateTimer;
 
     private Ray debugRay;
@@ -57,21 +59,22 @@ public class Posable : Tossable
                 if (this.IsGrounded() && this.stateTimer == null)
                 {
                     this.stateTimer = Timer.Register(1f, this.GoToNextState);
-                    Debug.Log("I hit the ground");
                 }
                 else if (!this.IsGrounded() && this.stateTimer != null)
                 {
                     this.stateTimer.Cancel();
                     this.stateTimer = null;
-                    Debug.Log("I left the ground");
                 }
 
                 break;
 
             case PosableState.Wandering:
+            case PosableState.Bored:
                 this.rigidbody.velocity = Vector3.zero;
-                this.rigidbody.AddForceAtPosition(this.wanderDirection*this.wanderSpeed, this.transform.position);
+                this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
+
                 break;
+
             case PosableState.Posing:
                 this.transform.Rotate(Vector3.up, 10);
                 break;
@@ -111,6 +114,11 @@ public class Posable : Tossable
 
                 this.Wander();
 
+                break;
+
+            case PosableState.Posing:
+                this.EnterState(PosableState.Bored, 5f);
+                this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
                 break;
 
             default:
@@ -161,12 +169,11 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        bool hit = Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
-        return hit;
+        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
     }
 
     private float getNewPoseTime()
     {
-        return Random.Range(this.posMinTime, this.posMaxTime);
+        return Random.Range(this.poseMinTime, this.poseMaxTime);
     }
 }

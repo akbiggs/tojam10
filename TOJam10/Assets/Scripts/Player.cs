@@ -34,14 +34,23 @@ public class Player : MonoBehaviour
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
     }
 
-	void Update()
-	{
+    void Update()
+    {
 	    this.previousMousePosition = this.currentMousePosition;
 	    this.currentMousePosition = Input.mousePosition;
 
+        if (Input.GetMouseButtonUp(0))
+        {
+            Cursor.visible = true;
+        }
+    }
+
+	void FixedUpdate()
+	{
+
 	    if (Input.GetMouseButtonDown(0))
 	    {
-	        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+	        Ray cameraRay = Camera.main.ScreenPointToRay(this.currentMousePosition);
 	        RaycastHit hitInfo;
 	        if (Physics.Raycast(cameraRay, out hitInfo))
 	        {
@@ -53,7 +62,8 @@ public class Player : MonoBehaviour
 	            }
 	        }
         }
-        else if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
+
+        if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
         {
             this.TossHeldObject();
         }
@@ -64,8 +74,9 @@ public class Player : MonoBehaviour
             Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
             Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
-            this.heldTossable.transform.position += currentMouseWorldPos - previousMouseWorldPos;
-            this.heldTossable.transform.position = this.heldTossable.transform.position.SetY(this.holdHeight);
+            this.heldTossable.rigidbody.AddForce((currentMouseWorldPos - previousMouseWorldPos) * 10000);
+            this.heldTossable.rigidbody.position = this.heldTossable.rigidbody.position.SetY(this.holdHeight);
+            this.heldTossable.rigidbody.velocity.Clamp(20);
 
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
@@ -120,7 +131,6 @@ public class Player : MonoBehaviour
     {
         this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
         this.heldTossable = null;
-        Cursor.visible = true;
     }
 
     private void snapPhoto()
