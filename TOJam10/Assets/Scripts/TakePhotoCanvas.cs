@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using System.Linq;
 
 public class TakePhotoCanvas : MonoBehaviour {
     public Canvas photograph;
 
     public Satisfiable[] photoRequirements;
+
+    public Text resultsText;
+
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +24,19 @@ public class TakePhotoCanvas : MonoBehaviour {
     void OnEnable()
     {
         Debug.Log("Camera enabled.");
-        //this.photograph.transform.localRotation = new Quaternion(0, 0, 20, 0);
+        RectTransform rectTransform = this.photograph.GetComponent<RectTransform>();
+        rectTransform.localRotation = Quaternion.Euler(new Vector3(0, 0, Random.Range(-10, 10)));
+
+        int countSatisfied = photoRequirements.Where(x => x.isSatisfied()).Count();
+
+        if (countSatisfied == this.photoRequirements.Length)
+        {
+            resultsText.text = "Congratulations!\nAll requirements have been satisfied!";
+        }
+        else
+        {
+            float percent = (float) countSatisfied / this.photoRequirements.Length;
+            resultsText.text = "Only " + percent + "% of the requirements have been met.\tKeep trying!";
+        }
     }
 }

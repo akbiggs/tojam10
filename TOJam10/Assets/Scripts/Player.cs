@@ -83,6 +83,9 @@ public class Player : MonoBehaviour
 
                 this.takePhotoAnimator.gameObject.SetActive(false);
                 this.snapCamera.enabled = true;
+
+                this.cameraBlur.enabled = false;
+
                 Debug.Log("Returning state to : " + this.state);
             }
         }
@@ -174,6 +177,8 @@ public class Player : MonoBehaviour
 
         this.flashTimer = Timer.Register(this.lengthOfFlash, () =>
         {
+            this.cameraBlur.enabled = true;
+
             foreach (Lamp lamp in this.lamps)
             {
                 lamp.light.enabled = false;
