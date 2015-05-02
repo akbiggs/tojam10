@@ -92,20 +92,20 @@ public class Player : MonoBehaviour
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
-        
-        if (Input.GetKeyDown(KeyCode.Space)) {
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
             Debug.Log("Poop: " + this.state);
             if (this.state == PlayerState.Playing)
             {
                 Debug.Log("SNAP PHOTO");
-                this.snapPhoto();
+                this.SnapPhoto();
             }
             else
             {
                 this.takePhotoAnimator.gameObject.SetActive(false);
                 //this.takePhotoAnimator.SetBool("closePhoto", true);
                 //TODO: exit animation
-
                 this.state = PlayerState.Playing;
             }
         }
@@ -165,7 +165,7 @@ public class Player : MonoBehaviour
         this.heldTossable = null;
     }
 
-    private void snapPhoto()
+    private void SnapPhoto()
     {
         //Do the flash.
         foreach (Lamp lamp in this.lamps) {
