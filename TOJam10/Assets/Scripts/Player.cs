@@ -17,9 +17,19 @@ public class Player : MonoBehaviour
 
     public BoxCollider screenToWorldMap;
 
+    public float lengthOfFlash; //How long the flash will go off for.
+
+    public Lamp[] lamps;
+    private float flashTimer;
+
+    public Animation shutterTopAnimation;
+    public Animation shutterBottomAnimation;
+
     void Awake()
     {
         Player.instance = this;
+
+        this.flashTimer = 0;
 
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
     }
@@ -60,8 +70,21 @@ public class Player : MonoBehaviour
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
-        else if (Input.GetKey(KeyCode.Space)) {
+        else if (Input.GetKeyDown(KeyCode.Space)) {
+            Debug.Log("SNAP PHOTO");
             this.snapPhoto();
+        }
+
+        if (this.flashTimer <= 0)
+        {
+            foreach (Lamp lamp in this.lamps)
+            {
+                lamp.light.enabled = false;
+            }
+        }
+        else
+        {
+            this.flashTimer -= Time.deltaTime;
         }
 	}
 
@@ -97,6 +120,14 @@ public class Player : MonoBehaviour
 
     private void snapPhoto()
     {
+        //Do the flash.
+        foreach (Lamp lamp in this.lamps) {
+            lamp.light.enabled = true;
+        }
 
+        this.shutterBottomAnimation.Play();
+        this.shutterTopAnimation.Play();
+
+        this.flashTimer = this.lengthOfFlash;
     }
 }
