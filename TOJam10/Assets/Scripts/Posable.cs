@@ -32,9 +32,11 @@ public class Posable : Tossable
     public float wanderSpeed;
     public float wanderTime;
 
+    public Target posingTarget;
+
     public float idleTime;
-    public float posMinTime; //How long this person who still posed for at a minimum
-    public float posMaxTime; //How long this person will stay posed for at a maximum.
+    public float poseMinTime; //How long this person who still posed for at a minimum
+    public float poseMaxTime; //How long this person will stay posed for at a maximum.
     private Timer stateTimer;
 
     private Ray debugRay;
@@ -67,8 +69,9 @@ public class Posable : Tossable
                 break;
 
             case PosableState.Wandering:
+            case PosableState.Bored:
                 this.rigidbody.velocity = Vector3.zero;
-                this.rigidbody.AddForceAtPosition(this.wanderDirection*this.wanderSpeed, this.transform.position);
+                this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
 
                 break;
 
@@ -111,6 +114,11 @@ public class Posable : Tossable
 
                 this.Wander();
 
+                break;
+
+            case PosableState.Posing:
+                this.EnterState(PosableState.Bored, 5f);
+                this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
                 break;
 
             default:
@@ -166,6 +174,6 @@ public class Posable : Tossable
 
     private float getNewPoseTime()
     {
-        return Random.Range(this.posMinTime, this.posMaxTime);
+        return Random.Range(this.poseMinTime, this.poseMaxTime);
     }
 }

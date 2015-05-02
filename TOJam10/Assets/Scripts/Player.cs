@@ -64,7 +64,7 @@ public class Player : MonoBehaviour
             Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
             this.heldTossable.rigidbody.AddForce((currentMouseWorldPos - previousMouseWorldPos) * 10000);
-            //this.heldTossable.rigidbody.position = this.heldTossable.rigidbody.position.SetY(this.holdHeight);
+            this.heldTossable.rigidbody.position = this.heldTossable.rigidbody.position.SetY(this.holdHeight);
             this.heldTossable.rigidbody.velocity.Clamp(20);
 
             this.previousHeldPosition = this.currentHeldPosition;
