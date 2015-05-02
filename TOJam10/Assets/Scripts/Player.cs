@@ -22,8 +22,8 @@ public class Player : MonoBehaviour
     public Lamp[] lamps;
     private float flashTimer;
 
-    public Animation shutterTopAnimation;
-    public Animation shutterBottomAnimation;
+    public Camera snapCamera;
+    public Animator takePhotoAnimator;
 
     void Awake()
     {
@@ -93,8 +93,13 @@ public class Player : MonoBehaviour
                 lamp.light.enabled = false;
             }
         }
-        else
+        else 
         {
+            if (this.flashTimer < this.lengthOfFlash - 0.09)
+            {
+                this.snapCamera.enabled = false;
+            }
+
             this.flashTimer -= Time.deltaTime;
         }
 	}
@@ -135,8 +140,7 @@ public class Player : MonoBehaviour
             lamp.light.enabled = true;
         }
 
-        this.shutterBottomAnimation.Play();
-        this.shutterTopAnimation.Play();
+        this.takePhotoAnimator.gameObject.SetActive(true);
 
         this.flashTimer = this.lengthOfFlash;
     }
