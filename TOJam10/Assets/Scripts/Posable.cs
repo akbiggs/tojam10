@@ -25,7 +25,7 @@ public class Posable : Tossable
 
     public float rotationSpeed = 0.1f;
 
-    private PosableState state;
+    public PosableState state { get; private set;}
     private PoseAnimation poseAnimation;
 
     private Vector3 wanderDirection;
@@ -36,6 +36,8 @@ public class Posable : Tossable
     public float posMinTime; //How long this person who still posed for at a minimum
     public float posMaxTime; //How long this person will stay posed for at a maximum.
     private Timer stateTimer;
+
+    private Ray debugRay;
 
     public override void Start()
     {
@@ -106,7 +108,6 @@ public class Posable : Tossable
 
             case PosableState.Helpless:
                 this.rigidbody.rotation = Quaternion.Euler(Vector3.zero);
-                this.rigidbody.constraints = RigidbodyConstraints.FreezeRotation;
 
                 this.Wander();
 
@@ -138,6 +139,8 @@ public class Posable : Tossable
         Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
         this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
 
+        this.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+
         this.EnterState(PosableState.Wandering, duration: this.wanderTime);
     }
 
@@ -158,7 +161,9 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y * 4 + 0.1f);
+        bool hit = Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
+        Debug.Log(hit);
+        return hit;
     }
 
     private float getNewPoseTime()
