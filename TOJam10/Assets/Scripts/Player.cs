@@ -89,7 +89,7 @@ public class Player : MonoBehaviour
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
         else if (Input.GetKeyDown(KeyCode.Space)) {
-            this.snapPhoto();
+            this.SnapPhoto();
         }
 
         if (this.flashTimer <= 0)
@@ -139,7 +139,7 @@ public class Player : MonoBehaviour
         this.heldTossable = null;
     }
 
-    private void snapPhoto()
+    private void SnapPhoto()
     {
         //Do the flash.
         foreach (Lamp lamp in this.lamps) {
