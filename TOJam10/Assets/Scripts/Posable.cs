@@ -57,13 +57,11 @@ public class Posable : Tossable
                 if (this.IsGrounded() && this.stateTimer == null)
                 {
                     this.stateTimer = Timer.Register(1f, this.GoToNextState);
-                    Debug.Log("I hit the ground");
                 }
                 else if (!this.IsGrounded() && this.stateTimer != null)
                 {
                     this.stateTimer.Cancel();
                     this.stateTimer = null;
-                    Debug.Log("I left the ground");
                 }
 
                 break;
@@ -71,7 +69,9 @@ public class Posable : Tossable
             case PosableState.Wandering:
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection*this.wanderSpeed, this.transform.position);
+
                 break;
+
             case PosableState.Posing:
                 this.transform.Rotate(Vector3.up, 10);
                 break;
