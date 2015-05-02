@@ -17,21 +17,40 @@ public class Player : MonoBehaviour
 
     public BoxCollider screenToWorldMap;
 
+    public float lengthOfFlash; //How long the flash will go off for.
+
+    public Lamp[] lamps;
+    private float flashTimer;
+
+    public Camera snapCamera;
+    public Animator takePhotoAnimator;
+
     void Awake()
     {
         Player.instance = this;
 
+        this.flashTimer = 0;
+
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
     }
 
-	void Update()
-	{
+    void Update()
+    {
 	    this.previousMousePosition = this.currentMousePosition;
 	    this.currentMousePosition = Input.mousePosition;
 
+        if (Input.GetMouseButtonUp(0))
+        {
+            Cursor.visible = true;
+        }
+    }
+
+	void FixedUpdate()
+	{
+
 	    if (Input.GetMouseButtonDown(0))
 	    {
-	        Ray cameraRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+	        Ray cameraRay = Camera.main.ScreenPointToRay(this.currentMousePosition);
 	        RaycastHit hitInfo;
 	        if (Physics.Raycast(cameraRay, out hitInfo))
 	        {
@@ -43,7 +62,8 @@ public class Player : MonoBehaviour
 	            }
 	        }
         }
-        else if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
+
+        if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
         {
             this.TossHeldObject();
         }
@@ -54,14 +74,33 @@ public class Player : MonoBehaviour
             Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
             Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
-            this.heldTossable.transform.position += currentMouseWorldPos - previousMouseWorldPos;
-            this.heldTossable.transform.position = this.heldTossable.transform.position.SetY(this.holdHeight);
+            this.heldTossable.rigidbody.AddForce((currentMouseWorldPos - previousMouseWorldPos) * 10000);
+            this.heldTossable.rigidbody.position = this.heldTossable.rigidbody.position.SetY(this.holdHeight);
+            this.heldTossable.rigidbody.velocity.Clamp(20);
 
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
-        else if (Input.GetKey(KeyCode.Space)) {
+        else if (Input.GetKeyDown(KeyCode.Space)) {
+            Debug.Log("SNAP PHOTO");
             this.snapPhoto();
+        }
+
+        if (this.flashTimer <= 0)
+        {
+            foreach (Lamp lamp in this.lamps)
+            {
+                lamp.light.enabled = false;
+            }
+        }
+        else 
+        {
+            if (this.flashTimer < this.lengthOfFlash - 0.09)
+            {
+                this.snapCamera.enabled = false;
+            }
+
+            this.flashTimer -= Time.deltaTime;
         }
 	}
 
@@ -92,11 +131,17 @@ public class Player : MonoBehaviour
     {
         this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
         this.heldTossable = null;
-        Cursor.visible = true;
     }
 
     private void snapPhoto()
     {
+        //Do the flash.
+        foreach (Lamp lamp in this.lamps) {
+            lamp.light.enabled = true;
+        }
 
+        this.takePhotoAnimator.gameObject.SetActive(true);
+
+        this.flashTimer = this.lengthOfFlash;
     }
 }
