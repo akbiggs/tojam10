@@ -41,8 +41,8 @@ public class LevelController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             GameObject photoReel = Instantiate(this.photoReelPrefab) as GameObject;
-            photoReel.transform.SetParent(this.ui.transform);
-
+            photoReel.transform.position = Vector3.zero;
+            //photoReel.transform.SetParent(this.ui.transform);
         }
     }
 

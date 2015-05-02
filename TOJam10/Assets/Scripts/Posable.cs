@@ -16,7 +16,8 @@ public enum PosableState
 
 public enum PoseAnimation
 {
-    Flattered
+    Sassy,
+    Cute
 }
 
 public class Posable : Tossable
@@ -41,17 +42,25 @@ public class Posable : Tossable
 
     public Target posingTarget;
 
+    public Animator animator;
+
     public override void Start()
     {
         base.Start();
 
         this.collider = this.GetComponent<BoxCollider>();
+        this.animator = this.GetComponent<Animator>();
+
         this.Wander();
     }
 
     public void Update()
     {
         //Debug.Log("Current state: " + this.state.ToString().ToUpper());
+
+        this.animator.SetBool("Walking", this.state == PosableState.Wandering);
+        this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
+        this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
 
         switch (this.state)
         {
