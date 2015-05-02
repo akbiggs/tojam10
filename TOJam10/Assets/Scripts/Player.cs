@@ -32,12 +32,15 @@ public class Player : MonoBehaviour
     public Camera snapCamera;
     public Animator takePhotoAnimator;
 
+    private PlayerState state;
 
     void Awake()
     {
         Player.instance = this;
 
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
+
+        this.state = PlayerState.Playing;
     }
 
     void Update()
@@ -48,6 +51,23 @@ public class Player : MonoBehaviour
         if (Input.GetMouseButtonUp(0))
         {
             Cursor.visible = true;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("When space was pressed, state was: " + this.state);
+            if (this.state == PlayerState.Playing)
+            {
+                Debug.Log("SNAP PHOTO");
+                this.SnapPhoto();
+            }
+            else
+            {
+                this.state = PlayerState.Playing;
+
+                this.takePhotoAnimator.gameObject.SetActive(false);
+                Debug.Log("Returning state to : " + this.state);
+            }
         }
     }
 
@@ -87,14 +107,8 @@ public class Player : MonoBehaviour
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
-        else if (Input.GetKeyDown(KeyCode.Space)) {
-            this.SnapPhoto();
-        }
 
-        if (this.flashTimer != null && this.flashTimer.GetElapsedTime() >= this.lengthOfFlash - 0.09)
-        {
-                this.snapCamera.enabled = false;
-        }
+	    
 	}
 
     private Vector3 GetMouseWorldPosition(Vector3 mousePosition)
@@ -135,6 +149,12 @@ public class Player : MonoBehaviour
 
         this.takePhotoAnimator.gameObject.SetActive(true);
 
+        // take the photo just before the flash goes off
+        Timer.Register(this.lengthOfFlash - 0.09f, () =>
+        {
+            this.snapCamera.enabled = false;
+        });
+
         this.flashTimer = Timer.Register(this.lengthOfFlash, () =>
         {
             foreach (Lamp lamp in this.lamps)
@@ -142,6 +162,12 @@ public class Player : MonoBehaviour
                 lamp.light.enabled = false;
             }
             LevelController.instance.AddPhoto(this.snapCamera.targetTexture);
+
+            this.flashTimer = null;
+
+            this.state = PlayerState.ReviewingPhoto;
         });
+
+        this.state = PlayerState.TakingPhoto;
     }
 }
