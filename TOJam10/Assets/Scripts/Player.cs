@@ -82,6 +82,7 @@ public class Player : MonoBehaviour
                 this.state = PlayerState.Playing;
 
                 this.takePhotoAnimator.gameObject.SetActive(false);
+                this.snapCamera.enabled = true;
                 Debug.Log("Returning state to : " + this.state);
             }
         }
