@@ -6,6 +6,9 @@ public class Target : MonoBehaviour
     private Timer poseTimer;
     private Posable firstEnteredObject;
 
+    //Who I expect to stand on top of me.
+    Posable expected;
+
     void OnTriggerStay(Collider c)
     {
         Posable posable = c.gameObject.GetComponent<Posable>();
