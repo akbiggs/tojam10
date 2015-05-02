@@ -2,6 +2,13 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
+public enum PlayerState
+{
+    Playing,
+    TakingPhoto,
+    ReviewingPhoto
+}
+
 public class Player : MonoBehaviour
 {
     public static Player instance;
