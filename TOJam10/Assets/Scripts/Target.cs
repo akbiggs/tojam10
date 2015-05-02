@@ -15,7 +15,6 @@ public class Target : MonoBehaviour {
 
     void OnTriggerEnter(Collider c)
     {
-        Debug.Log("HERE");
         Posable posable = c.gameObject.GetComponent<Posable>();
 
         if (posable != null)

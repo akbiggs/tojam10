@@ -8,7 +8,7 @@ public class Tossable : MonoBehaviour
     // sets how much the height of the toss is affected by the magnitude of the other axes
     public float tossHeightFactor;
 
-    protected new Rigidbody rigidbody;
+    public new Rigidbody rigidbody;
 
     public virtual void Start()
     {
