@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            Debug.Log("Poop: " + this.state);
+            Debug.Log("When space was pressed, state was: " + this.state);
             if (this.state == PlayerState.Playing)
             {
                 Debug.Log("SNAP PHOTO");
@@ -107,6 +107,7 @@ public class Player : MonoBehaviour
                 //this.takePhotoAnimator.SetBool("closePhoto", true);
                 //TODO: exit animation
                 this.state = PlayerState.Playing;
+                Debug.Log("Returning state to : " + this.state);
             }
         }
 
