@@ -32,14 +32,14 @@ public class Posable : Tossable
     public float wanderSpeed;
     public float wanderTime;
 
-    public Target posingTarget;
-
     public float idleTime;
     public float poseMinTime; //How long this person who still posed for at a minimum
     public float poseMaxTime; //How long this person will stay posed for at a maximum.
     private Timer stateTimer;
 
     private Ray debugRay;
+
+    public Target posingTarget;
 
     public override void Start()
     {
@@ -73,6 +73,12 @@ public class Posable : Tossable
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
 
+                if (!this.IsGrounded())
+                {
+                    Debug.Log("I'm falling!");
+                    this.BecomeHelpless(null);
+                }
+
                 break;
 
             case PosableState.Posing:
@@ -97,7 +103,7 @@ public class Posable : Tossable
         }
     }
 
-    private void GoToNextState()
+    public void GoToNextState()
     {
         switch (this.state)
         {
@@ -135,7 +141,7 @@ public class Posable : Tossable
         this.EnterState(PosableState.Posing, this.getNewPoseTime());
     }
 
-    public void BecomeHelpless(Vector3 mousePosition)
+    public void BecomeHelpless(Vector3? mousePosition)
     {
         this.rigidbody.velocity = Vector3.zero;
 
@@ -146,6 +152,7 @@ public class Posable : Tossable
     {
         Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
         this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
+        this.rigidbody.MoveRotation(Quaternion.LookRotation(wanderDirection));
 
         this.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 

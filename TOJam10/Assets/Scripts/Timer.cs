@@ -47,6 +47,11 @@ public class Timer
         return this.isCompleted || this.isCancelled;
     }
 
+    public float GetElapsedTime()
+    {
+        return this.GetTime() - this.startTime;
+    }
+
     public void Cancel()
     {
         this.isCancelled = true;
