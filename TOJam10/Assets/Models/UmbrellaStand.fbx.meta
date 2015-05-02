@@ -1,18 +1,22 @@
 fileFormatVersion: 2
-guid: 9eea4a87e255b459d8bc98944cf05b01
-timeCreated: 1430527556
+guid: 08d07d537503a4324b024a54dfd66273
+timeCreated: 1430531875
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2300000: //RootNode
-    3300000: //RootNode
+    100000: Cube
+    100002: Lamp
+    100004: //RootNode
+    400000: Cube
+    400002: Lamp
+    400004: //RootNode
+    2300000: Cube
+    3300000: Cube
     4300000: Cube
   materials:
     importMaterials: 1
-    materialName: 0
+    materialName: 2
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
@@ -29,7 +33,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: .699999988
+    globalScale: .300000012
     meshCompression: 0
     addColliders: 0
     importBlendShapes: 1
