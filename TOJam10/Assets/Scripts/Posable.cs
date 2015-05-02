@@ -32,14 +32,14 @@ public class Posable : Tossable
     public float wanderSpeed;
     public float wanderTime;
 
-    public Target posingTarget;
-
     public float idleTime;
     public float poseMinTime; //How long this person who still posed for at a minimum
     public float poseMaxTime; //How long this person will stay posed for at a maximum.
     private Timer stateTimer;
 
     private Ray debugRay;
+
+    public Target posingTarget;
 
     public override void Start()
     {
@@ -97,7 +97,7 @@ public class Posable : Tossable
         }
     }
 
-    private void GoToNextState()
+    public void GoToNextState()
     {
         switch (this.state)
         {

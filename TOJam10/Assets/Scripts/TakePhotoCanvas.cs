@@ -4,6 +4,8 @@ using System.Collections;
 public class TakePhotoCanvas : MonoBehaviour {
     public Canvas photograph;
 
+    public Satisfiable[] photoRequirements;
+
 	// Use this for initialization
 	void Start () {
 	
