@@ -89,7 +89,6 @@ public class Player : MonoBehaviour
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
         else if (Input.GetKeyDown(KeyCode.Space)) {
-            Debug.Log("SNAP PHOTO");
             this.snapPhoto();
         }
 
