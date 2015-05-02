@@ -27,16 +27,15 @@ public class Player : MonoBehaviour
     public float lengthOfFlash; //How long the flash will go off for.
 
     public Lamp[] lamps;
-    private float flashTimer;
+    private Timer flashTimer;
 
     public Camera snapCamera;
     public Animator takePhotoAnimator;
 
+
     void Awake()
     {
         Player.instance = this;
-
-        this.flashTimer = 0;
 
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
     }
@@ -92,21 +91,9 @@ public class Player : MonoBehaviour
             this.SnapPhoto();
         }
 
-        if (this.flashTimer <= 0)
+        if (this.flashTimer != null && this.flashTimer.GetElapsedTime() >= this.lengthOfFlash - 0.09)
         {
-            foreach (Lamp lamp in this.lamps)
-            {
-                lamp.light.enabled = false;
-            }
-        }
-        else 
-        {
-            if (this.flashTimer < this.lengthOfFlash - 0.09)
-            {
                 this.snapCamera.enabled = false;
-            }
-
-            this.flashTimer -= Time.deltaTime;
         }
 	}
 
@@ -148,6 +135,13 @@ public class Player : MonoBehaviour
 
         this.takePhotoAnimator.gameObject.SetActive(true);
 
-        this.flashTimer = this.lengthOfFlash;
+        this.flashTimer = Timer.Register(this.lengthOfFlash, () =>
+        {
+            foreach (Lamp lamp in this.lamps)
+            {
+                lamp.light.enabled = false;
+            }
+            LevelController.instance.AddPhoto(this.snapCamera.targetTexture);
+        });
     }
 }
