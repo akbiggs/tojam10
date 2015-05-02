@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using UnityStandardAssets.ImageEffects;
 
 public class StartLevelCanvas : MonoBehaviour {
     Timer countdownTimer;
@@ -26,6 +27,9 @@ public class StartLevelCanvas : MonoBehaviour {
             this.countdownTimer.Cancel();
 
             this.gameObject.SetActive(false);
+
+            BlurOptimized cameraBlur = Camera.main.GetComponent<BlurOptimized>();
+            cameraBlur.enabled = false;
         }
     }   
 
