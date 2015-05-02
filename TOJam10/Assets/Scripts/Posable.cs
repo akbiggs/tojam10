@@ -166,11 +166,6 @@ public class Posable : Tossable
         return hit;
     }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(this.transform.position, this.transform.position - Vector3.up * (this.collider.bounds.extents.y + 0.1f));
-    }
-
     private float getNewPoseTime()
     {
         return Random.Range(this.posMinTime, this.posMaxTime);
