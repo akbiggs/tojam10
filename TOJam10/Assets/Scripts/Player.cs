@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
+using UnityStandardAssets.ImageEffects;
 
 public enum PlayerState
 {
@@ -22,6 +23,10 @@ public class Player : MonoBehaviour
     private Tossable heldTossable;
     public float holdHeight;
 
+    public bool showStart;
+    public GameObject startCanvas;
+    private BlurOptimized cameraBlur;
+
     public BoxCollider screenToWorldMap;
 
     public float lengthOfFlash; //How long the flash will go off for.
@@ -41,6 +46,17 @@ public class Player : MonoBehaviour
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
 
         this.state = PlayerState.Playing;
+    }
+
+    void Start()
+    {
+       this.cameraBlur =  Camera.main.GetComponent<BlurOptimized>();
+
+       if (showStart)
+       {
+           this.cameraBlur.enabled = true;
+           this.startCanvas.SetActive(true);
+       }
     }
 
     void Update()
