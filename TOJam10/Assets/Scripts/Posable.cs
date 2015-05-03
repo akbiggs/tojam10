@@ -16,9 +16,9 @@ public enum PosableState
 
 public enum PoseAnimation
 {
+    None,
     Sassy,
-    Cute,
-    None
+    Cute
 }
 
 public class Posable : Tossable
@@ -59,6 +59,8 @@ public class Posable : Tossable
         this.collider = this.GetComponent<BoxCollider>();
         this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
+        this.poseAnimation = PoseAnimation.None;
+
         this.Wander();
     }
 
@@ -78,7 +80,7 @@ public class Posable : Tossable
             case PosableState.Helpless:
                 if (this.IsGrounded() && this.stateTimer == null)
                 {
-                    this.stateTimer = Timer.Register(1f, this.GoToNextState);
+                    this.stateTimer = Timer.Register(0.5f, this.GoToNextState);
                 }
                 else if (!this.IsGrounded() && this.stateTimer != null)
                 {
@@ -198,7 +200,7 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
+        return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.1f);
     }
 
     public void equip(Hat hat)
