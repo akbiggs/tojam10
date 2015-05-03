@@ -22,7 +22,7 @@ public class Tossable : MonoBehaviour
 
     public virtual void GetTossed(Vector3 dirAndSpeed)
     {
-        this.rigidbody.constraints = RigidbodyConstraints.None;
+        //this.rigidbody.constraints = RigidbodyConstraints.None;
         this.rigidbody.AddForce(dirAndSpeed.SetY(dirAndSpeed.magnitude * tossHeightFactor) * 1000);
     }
 

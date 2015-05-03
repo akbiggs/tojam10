@@ -16,7 +16,8 @@ public enum PosableState
 
 public enum PoseAnimation
 {
-    Flattered
+    Sassy,
+    Cute
 }
 
 public class Posable : Tossable
@@ -41,17 +42,27 @@ public class Posable : Tossable
 
     public Target posingTarget;
 
+    public Animator animator;
+
+    public Hat currentHat;
+
     public override void Start()
     {
         base.Start();
 
         this.collider = this.GetComponent<BoxCollider>();
+        this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
+
         this.Wander();
     }
 
     public void Update()
     {
         //Debug.Log("Current state: " + this.state.ToString().ToUpper());
+
+        this.animator.SetBool("Walking", this.state == PosableState.Wandering);
+        this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
+        this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
 
         switch (this.state)
         {
@@ -179,8 +190,36 @@ public class Posable : Tossable
         return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
     }
 
+    public void equip(Hat hat)
+    {
+        hat.transform.parent = this.transform;
+        
+        Vector3 hatPos = this.transform.position;
+        hatPos.y = this.getYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+
+        hat.GetComponent<Rigidbody>().isKinematic = true;
+        hat.GetComponent<Collider>().enabled = false;
+
+        hat.transform.position = hatPos;
+    }
+
     private float getNewPoseTime()
     {
         return Random.Range(this.poseMinTime, this.poseMaxTime);
+    }
+
+    private float getYOfHead()
+    {
+        return this.transform.position.y + this.collider.bounds.extents.y;
+    }
+
+    void OnCollisionEnter(Collision c)
+    {
+        Hat hat = c.gameObject.GetComponent<Hat>();
+        if (hat != null && hat != this.currentHat)
+        {
+            Debug.Log("Equipping a hat.");
+            this.equip(hat);
+        }
     }
 }
