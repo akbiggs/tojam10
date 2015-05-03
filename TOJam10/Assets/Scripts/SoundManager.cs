@@ -22,6 +22,8 @@ public class SoundManager : MonoBehaviour
 
     public AudioClip victorySound;
 
+    public AudioClip cameraShutter;
+
 	public AudioReverbPreset reverbType = AudioReverbPreset.Off;
 
     public static void PlaySound(AudioClip sound, Vector3 pos)
