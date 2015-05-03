@@ -313,6 +313,11 @@ public class Posable : Tossable
                 this.DropEquippedHat();
             }
 
+            if (hat.owner != null)
+            {
+                hat.owner.GetComponent<Posable>().DropEquippedHat();
+            }
+
             Debug.Log("Equipping new hat: " + hat);
             hat.transform.SetParent(this.headEnd.transform);
 

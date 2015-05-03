@@ -3,19 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
-using UnityEditor.Animations;
 
 public class TakePhotoCanvas : MonoBehaviour {
     public Canvas photograph;
 
     private Satisfiable[] photoRequirements;
 
-    public RuntimeAnimatorController regularAnimatorController;
-    public RuntimeAnimatorController titleAnimatorController;
-
     public Text resultsText;
 
     private bool isTitleScreen;
+
+    public RuntimeAnimatorController titleScreenAnimator;
+    public RuntimeAnimatorController regularAnimator;
 
 	// Use this for initialization
 	void Awake() {
@@ -23,11 +22,14 @@ public class TakePhotoCanvas : MonoBehaviour {
 
 	    if (Application.loadedLevelName.ToLower().Contains("titlescreen"))
 	    {
-	        this.GetComponent<Animator>().runtimeAnimatorController = this.titleAnimatorController;
+	        this.GetComponent<Animator>().runtimeAnimatorController = this.titleScreenAnimator;
+            this.transform.FindChild("PhotographCanvas").gameObject.SetActive(false);
+	        this.isTitleScreen = true;
 	    }
 	    else
 	    {
-	        this.GetComponent<Animator>().runtimeAnimatorController = this.regularAnimatorController;
+	        this.GetComponent<Animator>().runtimeAnimatorController = this.regularAnimator;
+	        this.isTitleScreen = false;
 	    }
 	}
 
