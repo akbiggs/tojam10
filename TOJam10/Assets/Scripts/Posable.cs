@@ -104,7 +104,8 @@ public class Posable : Tossable
                 break;
 
             case PosableState.Posing:
-                this.transform.Rotate(Vector3.up, 10);
+                //this.transform.Rotate(Vector3.up, 10);
+                this.transform.rotation = Quaternion.Euler(Vector3.forward);
                 break;
         }
     }
