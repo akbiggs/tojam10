@@ -14,8 +14,10 @@ public class Hat : MonoBehaviour {
 	
 	}
 
-    internal void RestorParent()
+    internal void RestoreParent()
     {
+        Vector3 position = this.transform.position;
         this.transform.SetParent(this.originalParentTransform);
+        this.transform.position = position;
     }
 }
