@@ -275,6 +275,12 @@ public class Posable : Tossable
             hat.transform.localRotation = Quaternion.Euler(new Vector3(270, 90, 0));
 
             this.currentHat = hat;
+
+            // play quips about hat
+            if (this.currentHat.name == "Pinapple")
+            {
+                SoundManager.MaybePlayRandomSound(SoundManager.instance.pineappleSounds, this.transform.position, 0.2f);
+            }
         }
     }
 
