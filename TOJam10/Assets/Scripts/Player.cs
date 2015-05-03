@@ -169,7 +169,7 @@ public class Player : MonoBehaviour
         this.heldTossable = tossable;
         this.heldTossable.GetPickedUp(Input.mousePosition);
 
-        //Cursor.visible = false;
+        Cursor.visible = false;
     }
 
     public void TossHeldObject()

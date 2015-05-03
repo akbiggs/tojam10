@@ -59,6 +59,8 @@ public class Posable : Tossable
     private Hat currentHat;
     private Hat tossedHat;
 
+    public GameObject headEnd;
+
     public Player player;
 
     public Animator animator;
@@ -177,6 +179,8 @@ public class Posable : Tossable
             case PosableState.Posing:
                 this.EnterState(PosableState.Bored, 2f);
                 this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
+
+                this.SetBlendedEulerAngles(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)).eulerAngles);
                 this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(this.wanderDirection, Vector3.up)));
                 break;
 
@@ -263,15 +267,12 @@ public class Posable : Tossable
             }
 
             Debug.Log("Equipping new hat: " + hat);
-            hat.transform.SetParent(this.transform);
-
-            Vector3 hatPos = this.transform.position;
-            hat.transform.localRotation = Quaternion.Euler(new Vector3(270, 90, 0));
-            hatPos.y = this.GetYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+            hat.transform.SetParent(this.headEnd.transform);
 
             hat.GetComponent<Rigidbody>().isKinematic = true;
             hat.GetComponent<Collider>().enabled = false;
-            hat.transform.position = hatPos;
+            hat.transform.localPosition = Vector3.zero.SetY(0.5f);
+            hat.transform.localRotation = Quaternion.Euler(new Vector3(270, 90, 0));
 
             this.currentHat = hat;
         }
