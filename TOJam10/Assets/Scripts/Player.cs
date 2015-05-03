@@ -72,8 +72,8 @@ public class Player : MonoBehaviour
         {
             Cursor.visible = true;
         }
-        
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetKeyDown(KeyCode.Space) && !LevelController.instance.interactionOnPause)
         {
             Debug.Log("When space was pressed, state was: " + this.state);
 

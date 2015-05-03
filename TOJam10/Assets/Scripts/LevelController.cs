@@ -15,6 +15,7 @@ public class LevelController : MonoBehaviour
     public GameObject photoReelPrefab;
 
     public Boolean wonThisLevel { get; set; }
+    public Boolean interactionOnPause { get; set; }
 
     public Canvas fadeoutCanvas;
 
@@ -23,6 +24,8 @@ public class LevelController : MonoBehaviour
         LevelController.instance = this;
 
         this.photos = new List<Texture>();
+
+        this.interactionOnPause = true;
         //this.savedPhotoPath = Application.persistentDataPath + "/SavedScreens/";
 
         //Debug.Log("Saving to " + this.savedPhotoPath);
