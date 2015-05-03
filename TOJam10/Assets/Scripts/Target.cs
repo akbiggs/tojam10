@@ -56,4 +56,9 @@ public class Target : Satisfiable
     {
         return (this.currentPosable == this.expectedPosable) && (this.expectedPosable.state == PosableState.Posing);
     }
+
+    public override bool IsActive()
+    {
+        return true;
+    }
 }
