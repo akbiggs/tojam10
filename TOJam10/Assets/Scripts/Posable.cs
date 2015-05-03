@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 using Random = UnityEngine.Random;
 
@@ -45,6 +46,8 @@ public class Posable : Tossable
     public float wanderMaxTime;
 
     public float rotateSpeed = 200;
+
+    private float pitch;
 
     public float idleTime;
     public float poseMinTime; //How long this person who still posed for at a minimum
@@ -90,6 +93,16 @@ public class Posable : Tossable
         this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
         this.poseAnimation = PoseAnimation.None;
+
+
+        if (this.gameObject.name.ToLower().Contains("female"))
+        {
+            this.pitch = Random.Range(1.15f, 1.3f);
+        }
+        else
+        {
+            this.pitch = Random.Range(0.85f, 1.15f);
+        }
 
         this.currentlyNaked = this.startsNaked;
         this.currentlyPainted = !this.needsToBePainted;
@@ -241,18 +254,21 @@ public class Posable : Tossable
             return;
         }
 
-        if (this.gameObject.name.ToLower().Contains("child"))
-        {
-            this.quip = SoundManager.PlayRandomSound(SoundManager.instance.childSounds, this.transform.position);
-        }
-        else if (this.gameObject.name.ToLower().Contains("alien"))
-        {
-            this.quip = SoundManager.PlayRandomSound(SoundManager.instance.lonelySounds, this.transform.position);
-        }
-        else
-        {
-            this.quip = SoundManager.PlayRandomSound(SoundManager.instance.niceHomeSounds, this.transform.position);
-        }
+        //if (this.gameObject.name.ToLower().Contains("child"))
+        //{
+        //    this.quip = SoundManager.PlayRandomSound(SoundManager.instance.childSounds, this.transform.position);
+        //}
+        //else if (this.gameObject.name.ToLower().Contains("alien"))
+        //{
+        //    this.quip = SoundManager.PlayRandomSound(SoundManager.instance.lonelySounds, this.transform.position);
+        //}
+        //else
+        //{
+        this.quip = SoundManager.PlayRandomSound(SoundManager.instance.niceHomeSounds
+            .Concat(SoundManager.instance.lonelySounds).Concat(SoundManager.instance.childSounds).ToArray(), this.transform.position);
+        //}
+
+        this.quip.pitch = this.pitch;
     }
 
     public void Wander()
