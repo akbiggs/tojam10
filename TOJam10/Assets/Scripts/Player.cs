@@ -120,7 +120,7 @@ public class Player : MonoBehaviour
             }
             Cursor.SetCursor(this.cursorCanGrab, this.currentMousePosition, CursorMode.Auto);
         }
-        else
+        else if (!this.cursorDoingGrab)
         {
             Cursor.SetCursor(this.cursorDefault, this.currentMousePosition, CursorMode.Auto);
         }
