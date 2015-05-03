@@ -176,6 +176,8 @@ public class Posable : Tossable
         this.poseAnimation = anim;
 
         this.EnterState(PosableState.Posing, this.GetNewPoseTime());
+
+        SoundManager.PlayRandomSound(SoundManager.instance.poseSounds, this.transform.position);
     }
 
     public void BecomeHelpless(Vector3? mousePosition)

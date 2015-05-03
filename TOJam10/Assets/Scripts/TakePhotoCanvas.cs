@@ -33,6 +33,8 @@ public class TakePhotoCanvas : MonoBehaviour {
         {
             resultsText.text = "Congratulations!\nAll requirements have been satisfied!";
 
+            SoundManager.PlaySound(SoundManager.instance.victorySound, Vector3.zero);
+
             LevelController.instance.wonThisLevel = true;
         }
         else

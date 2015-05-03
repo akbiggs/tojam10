@@ -40,9 +40,7 @@ public class SoundManager : MonoBehaviour
     public static void PlayRandomSound(AudioClip[] sounds, Vector3 pos)
     {
         if (sounds.Length == 0)
-        {
             return;
-        }
 
         SoundManager.PlaySound(sounds[Random.Range(0, sounds.Length)], pos);
     }
