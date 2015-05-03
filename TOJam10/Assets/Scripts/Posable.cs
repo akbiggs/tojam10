@@ -44,6 +44,7 @@ public class Posable : Tossable
 
     public Hat expectedHat;
     private Hat currentHat;
+    private Hat tossedHat;
 
     public Player player;
 
@@ -55,7 +56,7 @@ public class Posable : Tossable
         base.Start();
 
         this.collider = this.GetComponent<BoxCollider>();
-        this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
+        //this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
         this.Wander();
     }
@@ -64,9 +65,9 @@ public class Posable : Tossable
     {
         //Debug.Log("Current state: " + this.state.ToString().ToUpper());
 
-        this.animator.SetBool("Walking", this.state == PosableState.Wandering);
-        this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
-        this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
+        //this.animator.SetBool("Walking", this.state == PosableState.Wandering);
+        //this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
+        //this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
 
         switch (this.state)
         {
@@ -196,23 +197,25 @@ public class Posable : Tossable
 
     public void equip(Hat hat)
     {
-        if (this.currentHat != null)
+        if (hat != this.tossedHat)
         {
-            Debug.Log("Current hat is " + this.currentHat + "which should be getting thrown.");
+            if (this.currentHat != null)
+            {
+                Debug.Log("Current hat is " + this.currentHat + "which should be getting thrown.");
+                this.currentHat.GetComponent<Rigidbody>().isKinematic = false;
+                this.currentHat.GetComponent<Collider>().enabled = true;
 
-            this.currentHat.GetComponent<Rigidbody>().isKinematic = false;
-            this.currentHat.GetComponent<Collider>().enabled = true;
+                this.currentHat.transform.parent = this.transform.parent;
 
-            this.currentHat.transform.parent = this.transform.parent;
+                this.currentHat.GetComponent<Tossable>().GetTossed(this.transform.forward*4);
 
-            this.currentHat.GetComponent<Tossable>().GetTossed(this.transform.forward * 4);
+                this.currentHat.RestoreParent();
 
-            this.currentHat.RestorParent();
+                this.tossedHat = this.currentHat;
+                Timer.Register(0.5f, () => { this.tossedHat = null; });
+                this.currentHat = null;
+            }
 
-            this.currentHat = null;
-        }
-        else
-        {
             Debug.Log("Equipping new hat: " + hat);
             hat.transform.SetParent(this.transform);
 
@@ -224,8 +227,6 @@ public class Posable : Tossable
             hat.transform.position = hatPos;
 
             this.currentHat = hat;
-
-            //this.player.TossHeldObject();
         }
     }
 
