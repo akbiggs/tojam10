@@ -30,6 +30,8 @@ public class StartLevelCanvas : MonoBehaviour {
 
             BlurOptimized cameraBlur = Camera.main.GetComponent<BlurOptimized>();
             cameraBlur.enabled = false;
+
+            LevelController.instance.interactionOnPause = false;
         }
     }   
 
