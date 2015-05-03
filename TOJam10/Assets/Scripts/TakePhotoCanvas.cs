@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
+using UnityEditor.Animations;
 
 public class TakePhotoCanvas : MonoBehaviour {
     public Canvas photograph;
 
     private Satisfiable[] photoRequirements;
+
+    public RuntimeAnimatorController regularAnimatorController;
+    public RuntimeAnimatorController titleAnimatorController;
 
     public Text resultsText;
 
@@ -16,6 +20,15 @@ public class TakePhotoCanvas : MonoBehaviour {
 	// Use this for initialization
 	void Awake() {
         this.photoRequirements = GameObject.FindObjectsOfType<Satisfiable>().Where(o => o.getTotalToSatisfy() > 0).ToArray();
+
+	    if (Application.loadedLevelName.ToLower().Contains("titlescreen"))
+	    {
+	        this.GetComponent<Animator>().runtimeAnimatorController = this.titleAnimatorController;
+	    }
+	    else
+	    {
+	        this.GetComponent<Animator>().runtimeAnimatorController = this.regularAnimatorController;
+	    }
 	}
 
     void OnEnable()
