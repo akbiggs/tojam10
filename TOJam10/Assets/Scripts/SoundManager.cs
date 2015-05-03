@@ -26,6 +26,8 @@ public class SoundManager : MonoBehaviour
 
     public AudioClip cameraShutter;
 
+    public AudioClip outOfTime;
+
 	public AudioReverbPreset reverbType = AudioReverbPreset.Off;
 
     public static AudioSource PlaySound(AudioClip sound, Vector3 pos)
