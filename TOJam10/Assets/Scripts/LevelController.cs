@@ -40,7 +40,6 @@ public class LevelController : MonoBehaviour
         //    this.photos.Add(texture);
         //}
 
-        MusicPlayer.Instance.PlayMusic();
     }
 
     void Update()

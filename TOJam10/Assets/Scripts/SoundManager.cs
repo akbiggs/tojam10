@@ -7,6 +7,8 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance;
 
+    public AudioClip music;
+
     public AudioClip[] niceHomeSounds;
     public AudioClip[] lonelySounds;
     public AudioClip[] childSounds;
