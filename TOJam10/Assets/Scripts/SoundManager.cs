@@ -7,6 +7,8 @@ public class SoundManager : MonoBehaviour
 {
     public static SoundManager instance;
 
+    public AudioClip music;
+
     public AudioClip[] niceHomeSounds;
     public AudioClip[] lonelySounds;
     public AudioClip[] childSounds;
@@ -45,6 +47,14 @@ public class SoundManager : MonoBehaviour
             return;
 
         SoundManager.PlaySound(sounds[Random.Range(0, sounds.Length)], pos);
+    }
+
+    public static void MaybePlayRandomSound(AudioClip[] sounds, Vector3 pos, float probability)
+    {
+        if (Random.value <= probability)
+        {
+            SoundManager.PlayRandomSound(sounds, pos);
+        }
     }
 
 	// Use this for initialization

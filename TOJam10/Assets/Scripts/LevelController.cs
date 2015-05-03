@@ -40,7 +40,6 @@ public class LevelController : MonoBehaviour
         //    this.photos.Add(texture);
         //}
 
-        MusicPlayer.Instance.PlayMusic();
     }
 
     void Update()
@@ -81,6 +80,8 @@ public class LevelController : MonoBehaviour
     {
         int nextGameLevel = 0;
 
+        MusicPlayer.Instance.poop();
+
         if (Application.CanStreamedLevelBeLoaded(Application.loadedLevelName) &&
             Application.loadedLevel < Application.levelCount - 1)
         {
@@ -88,5 +89,9 @@ public class LevelController : MonoBehaviour
         }
 
         Application.LoadLevel(nextGameLevel);
+
+        Timer.CancelAllRegisteredTimers();
+
+
     }
 }
