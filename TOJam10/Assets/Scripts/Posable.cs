@@ -384,6 +384,8 @@ public class Posable : Tossable
                 this.skinRenderer.material = this.suitMaterial;
                 this.currentlyNaked = false;
 
+                this.transform.FindChild("Shine Particle System").GetComponent<ParticleSystem>().Play();
+
                 return;
             }
         }
