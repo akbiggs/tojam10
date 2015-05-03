@@ -37,6 +37,10 @@ public class Player : MonoBehaviour
     public Camera snapCamera;
     public Animator takePhotoAnimator;
 
+    public Texture2D cursorCanGrab;
+    public Texture2D cursorDoingGrab;
+    public Texture2D cursorDefault;
+
     private PlayerState state;
 
     void Awake()
@@ -72,7 +76,12 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("When space was pressed, state was: " + this.state);
-            if (this.state == PlayerState.Playing)
+
+            if (LevelController.instance.wonThisLevel) {
+                Timer.Register(1, LevelController.instance.NextLevel, false);
+                LevelController.instance.fadeoutCanvas.gameObject.SetActive(true);
+            }
+            else if (this.state == PlayerState.Playing)
             {
                 Debug.Log("SNAP PHOTO");
                 this.SnapPhoto();
@@ -93,20 +102,27 @@ public class Player : MonoBehaviour
 
 	void FixedUpdate()
 	{
+        Tossable tossable = null;
 
-	    if (Input.GetMouseButtonDown(0))
-	    {
-	        Ray cameraRay = Camera.main.ScreenPointToRay(this.currentMousePosition);
-	        RaycastHit hitInfo;
-	        if (Physics.Raycast(cameraRay, out hitInfo))
-	        {
-	            Tossable tossable = hitInfo.transform.GetComponent<Tossable>();
+        Ray cameraRay = Camera.main.ScreenPointToRay(this.currentMousePosition);
+        RaycastHit hitInfo;
+        if (Physics.Raycast(cameraRay, out hitInfo))
+        {
+            tossable = hitInfo.transform.GetComponent<Tossable>();
+        }
 
-	            if (tossable != null)
-	            {
-	                this.PickUp(tossable);
-	            }
-	        }
+
+        if (tossable != null)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                this.PickUp(tossable);
+            }
+            Cursor.SetCursor(this.cursorCanGrab, this.currentMousePosition, CursorMode.Auto);
+        }
+        else
+        {
+            Cursor.SetCursor(this.cursorDefault, this.currentMousePosition, CursorMode.Auto);
         }
 
         if (Input.GetMouseButtonUp(0) && this.heldTossable != null)

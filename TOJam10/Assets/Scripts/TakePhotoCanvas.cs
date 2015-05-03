@@ -32,6 +32,8 @@ public class TakePhotoCanvas : MonoBehaviour {
         if (countSatisfied == this.photoRequirements.Length)
         {
             resultsText.text = "Congratulations!\nAll requirements have been satisfied!";
+
+            LevelController.instance.wonThisLevel = true;
         }
         else
         {
