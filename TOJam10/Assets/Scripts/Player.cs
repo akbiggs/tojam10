@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     private Vector3 previousMousePosition;
     private Vector3 currentMousePosition;
 
-    private Tossable heldTossable;
+    public Tossable heldTossable;
     public float holdHeight;
 
     public bool showStart;

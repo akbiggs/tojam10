@@ -308,6 +308,11 @@ public class Posable : Tossable
     {
         if (hat != this.tossedHat)
         {
+            if (Player.instance.heldTossable.gameObject.Equals(hat.gameObject))
+            {
+                Player.instance.TossHeldObject();
+            }
+
             if (this.currentHat != null)
             {
                 this.DropEquippedHat();
