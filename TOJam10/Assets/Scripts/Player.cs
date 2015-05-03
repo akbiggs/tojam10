@@ -118,11 +118,11 @@ public class Player : MonoBehaviour
             {
                 this.PickUp(tossable);
             }
-            Cursor.SetCursor(this.cursorCanGrab, this.currentMousePosition, CursorMode.Auto);
+            Cursor.SetCursor(this.cursorCanGrab,new Vector2(0, 0), CursorMode.Auto);
         }
-        else if (!this.cursorDoingGrab)
+        else// if (!this.cursorDoingGrab)
         {
-            Cursor.SetCursor(this.cursorDefault, this.currentMousePosition, CursorMode.Auto);
+            Cursor.SetCursor(this.cursorDefault, new Vector2(0, 0), CursorMode.Auto);
         }
 
         if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
@@ -167,7 +167,7 @@ public class Player : MonoBehaviour
         this.heldTossable = tossable;
         this.heldTossable.GetPickedUp(Input.mousePosition);
 
-        Cursor.visible = false;
+        //Cursor.visible = false;
     }
 
     public void TossHeldObject()
