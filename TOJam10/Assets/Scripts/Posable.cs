@@ -51,7 +51,7 @@ public class Posable : Tossable
         base.Start();
 
         this.collider = this.GetComponent<BoxCollider>();
-        this.animator = this.GetComponent<Animator>();
+        this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
         this.Wander();
     }
