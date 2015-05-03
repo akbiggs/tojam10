@@ -17,7 +17,8 @@ public enum PosableState
 public enum PoseAnimation
 {
     Sassy,
-    Cute
+    Cute,
+    None
 }
 
 public class Posable : Tossable
@@ -56,18 +57,21 @@ public class Posable : Tossable
         base.Start();
 
         this.collider = this.GetComponent<BoxCollider>();
-        //this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
+        this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
         this.Wander();
     }
 
     public void Update()
     {
-        //Debug.Log("Current state: " + this.state.ToString().ToUpper());
+        Debug.Log("Current state: " + this.state.ToString().ToUpper());
 
-        //this.animator.SetBool("Walking", this.state == PosableState.Wandering);
-        //this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
-        //this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
+        this.animator.SetBool("Walking", this.state == PosableState.Wandering || this.state == PosableState.Bored);
+        this.animator.SetBool("Idle", this.state == PosableState.Idle);
+        this.animator.SetBool("PickedUp", this.state == PosableState.Helpless);
+
+        this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
+        this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
 
         switch (this.state)
         {
@@ -89,11 +93,11 @@ public class Posable : Tossable
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
 
-                if (!this.IsGrounded())
-                {
-                    Debug.Log("I'm falling!");
-                    this.BecomeHelpless(null);
-                }
+                //if (!this.IsGrounded())
+                //{
+                //    Debug.Log("I'm falling!");
+                //    this.BecomeHelpless(null);
+                //}
 
                 break;
 
@@ -121,6 +125,7 @@ public class Posable : Tossable
 
     public void GoToNextState()
     {
+
         switch (this.state)
         {
             case PosableState.Wandering:
@@ -139,8 +144,9 @@ public class Posable : Tossable
                 break;
 
             case PosableState.Posing:
-                this.EnterState(PosableState.Bored, 5f);
+                this.EnterState(PosableState.Bored, 2f);
                 this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
+                this.poseAnimation = PoseAnimation.None;
                 break;
 
             default:
