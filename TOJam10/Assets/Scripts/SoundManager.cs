@@ -28,33 +28,37 @@ public class SoundManager : MonoBehaviour
 
 	public AudioReverbPreset reverbType = AudioReverbPreset.Off;
 
-    public static void PlaySound(AudioClip sound, Vector3 pos)
+    public static AudioSource PlaySound(AudioClip sound, Vector3 pos)
     {
-        SoundManager.instance.PlayClipAt(sound, pos);
+        return SoundManager.instance.PlayClipAt(sound, pos);
     }
 
-    public static void MaybePlaySound(AudioClip sound, Vector3 pos, float probability)
+    public static AudioSource MaybePlaySound(AudioClip sound, Vector3 pos, float probability)
     {
         if (Random.value <= probability)
         {
-            SoundManager.PlaySound(sound, pos);
+            return SoundManager.PlaySound(sound, pos);
         }
+
+        return null;
     }
 
-    public static void PlayRandomSound(AudioClip[] sounds, Vector3 pos)
+    public static AudioSource PlayRandomSound(AudioClip[] sounds, Vector3 pos)
     {
         if (sounds.Length == 0)
-            return;
+            return null;
 
-        SoundManager.PlaySound(sounds[Random.Range(0, sounds.Length)], pos);
+        return SoundManager.PlaySound(sounds[Random.Range(0, sounds.Length)], pos);
     }
 
-    public static void MaybePlayRandomSound(AudioClip[] sounds, Vector3 pos, float probability)
+    public static AudioSource MaybePlayRandomSound(AudioClip[] sounds, Vector3 pos, float probability)
     {
         if (Random.value <= probability)
         {
-            SoundManager.PlayRandomSound(sounds, pos);
+            return SoundManager.PlayRandomSound(sounds, pos);
         }
+
+        return null;
     }
 
 	// Use this for initialization
