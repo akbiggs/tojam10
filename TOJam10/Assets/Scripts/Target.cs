@@ -17,7 +17,7 @@ public class Target : Satisfiable
     {
         Posable posable = c.gameObject.GetComponent<Posable>();
 
-        if (posable != null && posable != this.currentPosable &&
+        if (this.currentPosable == null && posable != null && 
             posable.state != PosableState.Helpless && posable.state != PosableState.Bored && 
             this.poseTimer == null)
         {

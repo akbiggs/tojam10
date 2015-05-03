@@ -78,6 +78,7 @@ public class Posable : Tossable
     public Renderer skinRenderer;
     public Material suitMaterial;
     public Material paintMaterial;
+    private Material originalMaterial;
 
     // Rotation we should blend towards.
     private Quaternion _targetRotation = Quaternion.identity;
@@ -97,6 +98,8 @@ public class Posable : Tossable
         this.Wander();
 
         this.PlayRandomQuipAfterTime();
+
+        this.originalMaterial = this.skinRenderer.material; 
     }
 
     public void PlayRandomQuipAfterTime()
@@ -340,6 +343,8 @@ public class Posable : Tossable
         {
             Debug.Log("Equipping a hat.");
             this.Equip(hat);
+
+            return;
         }
 
         if (this.startsNaked)
@@ -349,6 +354,8 @@ public class Posable : Tossable
             {
                 this.skinRenderer.material = this.suitMaterial;
                 this.currentlyNaked = false;
+
+                return;
             }
         }
 
@@ -357,6 +364,15 @@ public class Posable : Tossable
         {
             this.skinRenderer.material = this.paintMaterial;
             this.currentlyPainted = true;
+
+            return;
+        }
+
+        WaterBucket waterBucket = c.gameObject.GetComponent<WaterBucket>();
+        if (waterBucket != null && this.currentlyPainted)
+        {
+            this.skinRenderer.material = this.originalMaterial;
+            this.currentlyPainted = false;
         }
     }
 
