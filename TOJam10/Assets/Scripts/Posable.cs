@@ -41,9 +41,12 @@ public class Posable : Tossable
     public float wanderSpeed;
     public float wanderTime;
 
+    public float rotateSpeed = 200;
+
     public float idleTime;
     public float poseMinTime; //How long this person who still posed for at a minimum
     public float poseMaxTime; //How long this person will stay posed for at a maximum.
+    
     private Timer stateTimer;
 
     private Ray debugRay;
@@ -62,6 +65,9 @@ public class Posable : Tossable
 
     public Renderer skinRenderer;
     public Material suitMaterial;
+
+    // Rotation we should blend towards.
+    private Quaternion _targetRotation = Quaternion.identity;
 
     public override void Start()
     {
@@ -106,6 +112,9 @@ public class Posable : Tossable
             case PosableState.Bored:
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
+
+                // Turn towards our target rotation.
+               this. transform.rotation = Quaternion.RotateTowards(transform.rotation, _targetRotation, this.rotateSpeed * Time.deltaTime);
 
                 //if (!this.IsGrounded())
                 //{
@@ -171,6 +180,12 @@ public class Posable : Tossable
         }
     }
 
+    // Call this when you want to turn the object smoothly.
+    public void SetBlendedEulerAngles(Vector3 angles)
+    {
+        _targetRotation = Quaternion.Euler(angles);
+    }
+
     public void Pose(PoseAnimation anim)
     {
         Debug.Log("Starting to pose.");
@@ -193,7 +208,7 @@ public class Posable : Tossable
     {
         Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
         this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
-        this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)));
+        this.SetBlendedEulerAngles(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)).eulerAngles);
 
         this.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
