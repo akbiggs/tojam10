@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using Random = UnityEngine.Random;
 
@@ -23,6 +24,11 @@ public enum PoseAnimation
 
 public class Posable : Tossable
 {
+    public List<string> texts = new List<string>()
+    {
+        "This is a nice home."
+    };
+
     protected new BoxCollider collider;
 
     public float rotationSpeed = 0.1f;
@@ -163,7 +169,7 @@ public class Posable : Tossable
         Debug.Log("Starting to pose.");
         this.poseAnimation = anim;
 
-        this.EnterState(PosableState.Posing, this.getNewPoseTime());
+        this.EnterState(PosableState.Posing, this.GetNewPoseTime());
     }
 
     public void BecomeHelpless(Vector3? mousePosition)
@@ -204,7 +210,7 @@ public class Posable : Tossable
         return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.1f);
     }
 
-    public void equip(Hat hat)
+    public void Equip(Hat hat)
     {
         if (hat != this.tossedHat)
         {
@@ -229,7 +235,8 @@ public class Posable : Tossable
             hat.transform.SetParent(this.transform);
 
             Vector3 hatPos = this.transform.position;
-            hatPos.y = this.getYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+            hat.transform.localRotation = Quaternion.Euler(new Vector3(270, 90, 0));
+            hatPos.y = this.GetYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
 
             hat.GetComponent<Rigidbody>().isKinematic = true;
             hat.GetComponent<Collider>().enabled = false;
@@ -239,12 +246,12 @@ public class Posable : Tossable
         }
     }
 
-    private float getNewPoseTime()
+    private float GetNewPoseTime()
     {
         return Random.Range(this.poseMinTime, this.poseMaxTime);
     }
 
-    private float getYOfHead()
+    private float GetYOfHead()
     {
         return this.transform.position.y + this.collider.bounds.extents.y;
     }
@@ -255,7 +262,7 @@ public class Posable : Tossable
         if (hat != null && hat != this.currentHat)
         {
             Debug.Log("Equipping a hat.");
-            this.equip(hat);
+            this.Equip(hat);
         }
     }
 
