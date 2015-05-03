@@ -97,6 +97,8 @@ public class Posable : Tossable
     {
         Timer.Register(Random.Range(this.quipMinTime, this.quipMaxTime), () =>
         {
+            Debug.Log("Random sound");
+
             if (this.gameObject.name.ToLower().Contains("child"))
             {
                 SoundManager.PlayRandomSound(SoundManager.instance.childSounds, this.transform.position);
