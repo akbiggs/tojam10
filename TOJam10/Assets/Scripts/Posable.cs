@@ -41,7 +41,10 @@ public class Posable : Tossable
 
     public Target posingTarget;
 
-    public Hat currentHat;
+    Hat currentHat;
+    public Hat expectedHat;
+
+    public Player player;
 
     public override void Start()
     {
@@ -178,20 +181,42 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
+        return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
     }
 
     public void equip(Hat hat)
     {
-        hat.transform.parent = this.transform;
-        
-        Vector3 hatPos = this.transform.position;
-        hatPos.y = this.getYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+        if (this.currentHat != null)
+        {
+            Debug.Log("Current hat is " + this.currentHat + "which should be getting thrown.");
 
-        hat.GetComponent<Rigidbody>().isKinematic = true;
-        hat.GetComponent<Collider>().enabled = false;
+            this.currentHat.GetComponent<Rigidbody>().isKinematic = false;
+            this.currentHat.GetComponent<Collider>().enabled = true;
 
-        hat.transform.position = hatPos;
+            this.currentHat.transform.parent = this.transform.parent;
+
+            this.currentHat.GetComponent<Tossable>().GetTossed(this.transform.forward * 4);
+
+            this.currentHat.RestorParent();
+
+            this.currentHat = null;
+        }
+        else
+        {
+            Debug.Log("Equipping new hat: " + hat);
+            hat.transform.SetParent(this.transform);
+
+            Vector3 hatPos = this.transform.position;
+            hatPos.y = this.getYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+
+            hat.GetComponent<Rigidbody>().isKinematic = true;
+            hat.GetComponent<Collider>().enabled = false;
+            hat.transform.position = hatPos;
+
+            this.currentHat = hat;
+
+            //this.player.TossHeldObject();
+        }
     }
 
     private float getNewPoseTime()
@@ -212,5 +237,11 @@ public class Posable : Tossable
             Debug.Log("Equipping a hat.");
             this.equip(hat);
         }
+    }
+
+    public override bool isSatisfied()
+    {
+        Debug.Log("The expected hat is : " + this.expectedHat + " and the current hat is " + this.currentHat);
+        return this.currentHat == this.expectedHat;
     }
 }

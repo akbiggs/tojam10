@@ -154,10 +154,13 @@ public class Player : MonoBehaviour
         Cursor.visible = false;
     }
 
-    private void TossHeldObject()
+    public void TossHeldObject()
     {
-        this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
-        this.heldTossable = null;
+        if (this.heldTossable != null)
+        {
+            this.heldTossable.GetTossed(this.currentHeldPosition - this.previousHeldPosition);
+            this.heldTossable = null;
+        }
     }
 
     private void SnapPhoto()
