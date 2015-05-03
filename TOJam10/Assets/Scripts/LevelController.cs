@@ -29,7 +29,9 @@ public class LevelController : MonoBehaviour
     private Posable[] posables;
 
     public Text timeLeftText;
-    private float timeAvailable = 11;
+    private float timeAvailable = 31;
+
+    public GameObject creepyEnding;
 
   //  public bool startCountdown {public set; private get;}
 
@@ -150,6 +152,7 @@ public class LevelController : MonoBehaviour
             Application.LoadLevel(Application.loadedLevel);
         }, false);
 
+        this.creepyEnding.SetActive(true);
         this.fadeoutCanvas.gameObject.SetActive(true);
     }
 
