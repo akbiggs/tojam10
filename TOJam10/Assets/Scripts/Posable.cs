@@ -133,7 +133,8 @@ public class Posable : Tossable
 
     public void GoToNextState()
     {
-
+        this.poseAnimation = PoseAnimation.None;
+        
         switch (this.state)
         {
             case PosableState.Wandering:
@@ -154,7 +155,6 @@ public class Posable : Tossable
             case PosableState.Posing:
                 this.EnterState(PosableState.Bored, 2f);
                 this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
-                this.poseAnimation = PoseAnimation.None;
                 break;
 
             default:
@@ -174,6 +174,7 @@ public class Posable : Tossable
     public void BecomeHelpless(Vector3? mousePosition)
     {
         this.rigidbody.velocity = Vector3.zero;
+        this.poseAnimation = PoseAnimation.None;
 
         this.EnterState(PosableState.Helpless);
     }
@@ -206,7 +207,7 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.1f);
+        return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.15f);
     }
 
     public void Equip(Hat hat)
