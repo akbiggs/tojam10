@@ -39,6 +39,8 @@ public class LevelController : MonoBehaviour
         //    texture.LoadImage(File.ReadAllBytes(fileName));
         //    this.photos.Add(texture);
         //}
+
+        MusicPlayer.Instance.PlayMusic();
     }
 
     void Update()
