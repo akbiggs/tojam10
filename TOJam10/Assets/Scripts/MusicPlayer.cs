@@ -3,6 +3,10 @@ using System.Collections;
 
 public class MusicPlayer : Singleton<MusicPlayer> {
 
+    void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
 
     //public void Awake()
     //{
@@ -15,4 +19,9 @@ public class MusicPlayer : Singleton<MusicPlayer> {
     //        audioSource.PlayOneShot(SoundManager.instance.music, 0.5f);
     //    }
     //}
+
+    public void poop()
+    {
+
+    }
 }

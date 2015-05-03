@@ -7,7 +7,7 @@ public class Target : Satisfiable
 {
     private Timer poseTimer;
 
-    //Who I expect to stand on top of me.
+    //Who I expect to stand on top of me. If null, I will take anyone.
     public Posable expectedPosable;
     Posable currentPosable;
 
@@ -17,7 +17,7 @@ public class Target : Satisfiable
     {
         Posable posable = c.gameObject.GetComponent<Posable>();
 
-        if (posable != null && posable != this.currentPosable &&
+        if (this.currentPosable == null && posable != null && 
             posable.state != PosableState.Helpless && posable.state != PosableState.Bored && 
             this.poseTimer == null)
         {
@@ -54,7 +54,18 @@ public class Target : Satisfiable
 
     override public int getNumSatisfy()
     {
-        return (this.currentPosable == this.expectedPosable) && (this.expectedPosable.state == PosableState.Posing) ? 1: 0;
+        if (this.expectedPosable == null && this.currentPosable != null && this.currentPosable.state == PosableState.Posing)
+        {
+            Debug.Log("SATISFIED: " + this.currentPosable + " on this target.");
+            return 1;
+        }
+
+        if (this.expectedPosable != null && (this.currentPosable == this.expectedPosable) && (this.expectedPosable.state == PosableState.Posing))
+        {
+            return 1;
+        }
+
+        return 0;
     }
 
     override public int getTotalToSatisfy()
