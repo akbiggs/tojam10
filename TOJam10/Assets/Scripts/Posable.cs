@@ -20,7 +20,9 @@ public enum PoseAnimation
 {
     None = 0,
     Sassy = 1,
-    Cute = 2
+    Cute = 2,
+    Smack = 3,
+    Cool = 4
 }
 
 public class Posable : Tossable
@@ -91,6 +93,8 @@ public class Posable : Tossable
 
         this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
         this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
+        this.animator.SetBool("Smack", this.poseAnimation == PoseAnimation.Smack);
+        this.animator.SetBool("Cool", this.poseAnimation == PoseAnimation.Cool);
 
         switch (this.state)
         {
