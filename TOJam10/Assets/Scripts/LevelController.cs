@@ -31,6 +31,8 @@ public class LevelController : MonoBehaviour
     public Text timeLeftText;
     private float timeAvailable = 11;
 
+    public GameObject creepyEnding;
+
   //  public bool startCountdown {public set; private get;}
 
     public virtual void Awake()
@@ -63,7 +65,7 @@ public class LevelController : MonoBehaviour
         //    texture.LoadImage(File.ReadAllBytes(fileName));
         //    this.photos.Add(texture);
         //}
-
+        this.creepyEnding.SetActive(false);
 
         MusicPlayer.Instance.poop();
 
@@ -150,7 +152,11 @@ public class LevelController : MonoBehaviour
             Application.LoadLevel(Application.loadedLevel);
         }, false);
 
-        this.fadeoutCanvas.gameObject.SetActive(true);
+        this.creepyEnding.SetActive(true);
+        Timer.Register(1f, () =>
+        {
+            this.fadeoutCanvas.gameObject.SetActive(true);
+        });
     }
 
     public void NextLevel()
