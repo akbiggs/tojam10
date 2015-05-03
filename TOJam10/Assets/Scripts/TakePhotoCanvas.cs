@@ -13,9 +13,23 @@ public class TakePhotoCanvas : MonoBehaviour {
 
     private bool isTitleScreen;
 
+    public RuntimeAnimatorController titleScreenAnimator;
+    public RuntimeAnimatorController regularAnimator;
+
 	// Use this for initialization
 	void Awake() {
         this.photoRequirements = GameObject.FindObjectsOfType<Satisfiable>().Where(o => o.getTotalToSatisfy() > 0).ToArray();
+
+	    if (Application.loadedLevelName.ToLower().Contains("titlescreen"))
+	    {
+	        this.GetComponent<Animator>().runtimeAnimatorController = this.titleScreenAnimator;
+	        this.isTitleScreen = true;
+	    }
+	    else
+	    {
+	        this.GetComponent<Animator>().runtimeAnimatorController = this.regularAnimator;
+	        this.isTitleScreen = false;
+	    }
 	}
 
     void OnEnable()
