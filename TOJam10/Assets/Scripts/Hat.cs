@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Hat : MonoBehaviour {
     private Transform originalParentTransform;
+    public GameObject owner;
 
 	// Use this for initialization
 	void Start () {

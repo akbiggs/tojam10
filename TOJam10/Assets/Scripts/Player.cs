@@ -118,7 +118,15 @@ public class Player : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                this.PickUp(tossable);
+                Hat hat = tossable.GetComponent<Hat>();
+                if (hat != null && hat.owner != null)
+                {
+                    hat.owner.GetComponent<Posable>().DropEquippedHat();
+                }
+                else
+                {
+                    this.PickUp(tossable);
+                }
             }
             //Cursor.SetCursor(this.cursorCanGrab,new Vector2(0, 0), CursorMode.Auto);
         }
