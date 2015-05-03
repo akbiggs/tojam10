@@ -7,6 +7,7 @@ public class MusicPlayer : Singleton<MusicPlayer> {
     {
         DontDestroyOnLoad(this.gameObject);
     }
+
     //public void Awake()
     //{
     //    AudioSource audioSource = this.GetComponent<AudioSource>();

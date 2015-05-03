@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Hat : MonoBehaviour {
     private Transform originalParentTransform;
+    public GameObject owner;
+    public float offsetFromHead = 0.5f;
 
 	// Use this for initialization
 	void Start () {
