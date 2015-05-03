@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Text;
 using Random = UnityEngine.Random;
 
 public enum PosableState 
@@ -17,9 +18,9 @@ public enum PosableState
 
 public enum PoseAnimation
 {
-    None,
-    Sassy,
-    Cute
+    None = 0,
+    Sassy = 1,
+    Cute = 2
 }
 
 public class Posable : Tossable
@@ -40,9 +41,12 @@ public class Posable : Tossable
     public float wanderSpeed;
     public float wanderTime;
 
+    public float rotateSpeed = 200;
+
     public float idleTime;
     public float poseMinTime; //How long this person who still posed for at a minimum
     public float poseMaxTime; //How long this person will stay posed for at a maximum.
+    
     private Timer stateTimer;
 
     private Ray debugRay;
@@ -57,6 +61,13 @@ public class Posable : Tossable
 
     public Animator animator;
 
+    public bool isNaked = false;
+
+    public Renderer skinRenderer;
+    public Material suitMaterial;
+
+    // Rotation we should blend towards.
+    private Quaternion _targetRotation = Quaternion.identity;
 
     public override void Start()
     {
@@ -86,7 +97,8 @@ public class Posable : Tossable
             case PosableState.Helpless:
                 if (this.IsGrounded() && this.stateTimer == null)
                 {
-                    this.stateTimer = Timer.Register(0.5f, this.GoToNextState);
+                    this.GoToNextState();
+                    //this.stateTimer = Timer.Register(0.5f, this.GoToNextState);
                 }
                 else if (!this.IsGrounded() && this.stateTimer != null)
                 {
@@ -100,6 +112,9 @@ public class Posable : Tossable
             case PosableState.Bored:
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
+
+                // Turn towards our target rotation.
+               this. transform.rotation = Quaternion.RotateTowards(transform.rotation, _targetRotation, this.rotateSpeed * Time.deltaTime);
 
                 //if (!this.IsGrounded())
                 //{
@@ -147,15 +162,16 @@ public class Posable : Tossable
                 break;
 
             case PosableState.Helpless:
-                this.rigidbody.rotation = Quaternion.Euler(Vector3.zero);
+                //this.rigidbody.rotation = Quaternion.Euler(Vector3.zero);
 
-                this.Wander();
+                this.Idle();
 
                 break;
 
             case PosableState.Posing:
                 this.EnterState(PosableState.Bored, 2f);
                 this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
+                this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(this.wanderDirection, Vector3.up)));
                 break;
 
             default:
@@ -164,12 +180,20 @@ public class Posable : Tossable
         }
     }
 
+    // Call this when you want to turn the object smoothly.
+    public void SetBlendedEulerAngles(Vector3 angles)
+    {
+        _targetRotation = Quaternion.Euler(angles);
+    }
+
     public void Pose(PoseAnimation anim)
     {
         Debug.Log("Starting to pose.");
         this.poseAnimation = anim;
 
         this.EnterState(PosableState.Posing, this.GetNewPoseTime());
+
+        SoundManager.PlayRandomSound(SoundManager.instance.poseSounds, this.transform.position);
     }
 
     public void BecomeHelpless(Vector3? mousePosition)
@@ -184,7 +208,7 @@ public class Posable : Tossable
     {
         Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
         this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
-        this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)));
+        this.SetBlendedEulerAngles(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)).eulerAngles);
 
         this.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
@@ -265,11 +289,26 @@ public class Posable : Tossable
             Debug.Log("Equipping a hat.");
             this.Equip(hat);
         }
+
+        if (this.isNaked)
+        {
+            ClothingRack clothingRack = c.gameObject.GetComponent<ClothingRack>();
+            if (clothingRack != null)
+            {
+                this.skinRenderer.material = this.suitMaterial;
+                this.isNaked = false;
+            }
+        }
     }
 
     public override bool isSatisfied()
     {
         Debug.Log("The expected hat is : " + this.expectedHat + " and the current hat is " + this.currentHat);
-        return this.currentHat == this.expectedHat;
+        return this.currentHat == this.expectedHat && !this.isNaked;
+    }
+
+    public override bool IsActive()
+    {
+        return true;
     }
 }
