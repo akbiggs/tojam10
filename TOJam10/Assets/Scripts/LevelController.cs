@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class LevelController : MonoBehaviour
 {
@@ -24,6 +25,11 @@ public class LevelController : MonoBehaviour
     public float quipMaxTime;
     private Posable[] posables;
 
+    public Text timeLeftText;
+    public float timeAvailable = 31;
+
+  //  public bool startCountdown {public set; private get;}
+
     public virtual void Awake()
     {
         LevelController.instance = this;
@@ -38,6 +44,8 @@ public class LevelController : MonoBehaviour
 
         this.interactionOnPause = true;
         //this.savedPhotoPath = Application.persistentDataPath + "/SavedScreens/";
+
+       // this.startCountdown = false;
 
         //Debug.Log("Saving to " + this.savedPhotoPath);
 
@@ -80,6 +88,17 @@ public class LevelController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             Application.Quit();
+        }
+
+        if (!this.interactionOnPause)
+        {
+            timeAvailable -= Time.deltaTime;
+            this.timeLeftText.text = Math.Floor(timeAvailable) + ":00   ";
+
+            if (this.timeAvailable < 0)
+            {
+
+            }
         }
     }
 
