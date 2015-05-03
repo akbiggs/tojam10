@@ -8,20 +8,22 @@ public class MusicPlayer : Singleton<MusicPlayer> {
         DontDestroyOnLoad(this.gameObject);
     }
 
-    //public void Awake()
-    //{
-    //    AudioSource audioSource = this.GetComponent<AudioSource>();
+    public void awake()
+    {
 
-    //    Debug.Log("IN HERE");
-    //    if (!audioSource.isPlaying)
-    //    {
-    //        audioSource.loop = true;
-    //        audioSource.PlayOneShot(SoundManager.instance.music, 0.5f);
-    //    }
-    //}
+    }
 
     public void poop()
     {
+        AudioSource audSource = this.gameObject.GetComponent<AudioSource>();
+        if (audSource == null)
+        {
+            Debug.Log("Playing music.");
 
+            audSource = this.gameObject.AddComponent<AudioSource>();
+
+            audSource.loop = true;
+            audSource.PlayOneShot(SoundManager.instance.music, 0.5f);
+        }
     }
 }

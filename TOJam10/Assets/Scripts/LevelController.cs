@@ -26,7 +26,7 @@ public class LevelController : MonoBehaviour
     private Posable[] posables;
 
     public Text timeLeftText;
-    public float timeAvailable = 31;
+    private float timeAvailable = 11;
 
   //  public bool startCountdown {public set; private get;}
 
@@ -58,6 +58,11 @@ public class LevelController : MonoBehaviour
         //    texture.LoadImage(File.ReadAllBytes(fileName));
         //    this.photos.Add(texture);
         //}
+
+
+        MusicPlayer.Instance.poop();
+
+        this.timeLeftText.text = "";
     }
 
     public void PlayRandomQuipAfterTime()
@@ -92,12 +97,19 @@ public class LevelController : MonoBehaviour
 
         if (!this.interactionOnPause)
         {
-            timeAvailable -= Time.deltaTime;
-            this.timeLeftText.text = Math.Floor(timeAvailable) + ":00   ";
-
             if (this.timeAvailable < 0)
             {
+                SoundManager.PlaySound(SoundManager.instance.outOfTime, this.transform.position);
+                this.timeAvailable = 0;
+                this.timeLeftText.text = "0:00   ";
 
+                this.interactionOnPause = true;
+                this.RestartLevel();
+            }
+            else
+            {
+                timeAvailable -= Time.deltaTime;
+                this.timeLeftText.text = Math.Floor(timeAvailable) + ":00   ";
             }
         }
     }
@@ -124,6 +136,18 @@ public class LevelController : MonoBehaviour
         this.photos.Remove(photo);
     }
 
+    public void RestartLevel()
+    {
+        Timer.Register(2f, () =>
+        {
+            MusicPlayer.Instance.poop();
+            Timer.CancelAllRegisteredTimers();
+            Application.LoadLevel(Application.loadedLevel);
+        }, false);
+
+        this.fadeoutCanvas.gameObject.SetActive(true);
+    }
+
     public void NextLevel()
     {
         int nextGameLevel = 0;
@@ -136,9 +160,9 @@ public class LevelController : MonoBehaviour
             nextGameLevel = Application.loadedLevel + 1;
         }
 
-        Application.LoadLevel(nextGameLevel);
-
         Timer.CancelAllRegisteredTimers();
+
+        Application.LoadLevel(nextGameLevel);
     }
 
     public void FadeToNextLevel()
