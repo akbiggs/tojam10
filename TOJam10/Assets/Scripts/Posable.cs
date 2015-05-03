@@ -163,7 +163,7 @@ public class Posable : Tossable
     {
         Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
         this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
-        this.rigidbody.MoveRotation(Quaternion.LookRotation(wanderDirection));
+        this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)));
 
         this.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
