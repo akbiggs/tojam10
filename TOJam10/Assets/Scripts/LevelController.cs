@@ -14,6 +14,10 @@ public class LevelController : MonoBehaviour
     public GameObject ui;
     public GameObject photoReelPrefab;
 
+    public Boolean wonThisLevel { get; set; }
+
+    public Canvas fadeoutCanvas;
+
     public virtual void Awake()
     {
         LevelController.instance = this;
@@ -66,5 +70,18 @@ public class LevelController : MonoBehaviour
     public void RemovePhoto(Texture photo)
     {
         this.photos.Remove(photo);
+    }
+
+    public void NextLevel()
+    {
+        int nextGameLevel = 0;
+
+        if (Application.CanStreamedLevelBeLoaded(Application.loadedLevelName) &&
+            Application.loadedLevel < Application.levelCount - 1)
+        {
+            nextGameLevel = Application.loadedLevel + 1;
+        }
+
+        Application.LoadLevel(nextGameLevel);
     }
 }

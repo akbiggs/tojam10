@@ -72,7 +72,12 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("When space was pressed, state was: " + this.state);
-            if (this.state == PlayerState.Playing)
+
+            if (LevelController.instance.wonThisLevel) {
+                Timer.Register(1, LevelController.instance.NextLevel, false);
+                LevelController.instance.fadeoutCanvas.gameObject.SetActive(true);
+            }
+            else if (this.state == PlayerState.Playing)
             {
                 Debug.Log("SNAP PHOTO");
                 this.SnapPhoto();
