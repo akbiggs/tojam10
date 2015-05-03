@@ -23,6 +23,7 @@ public class TakePhotoCanvas : MonoBehaviour {
 	    if (Application.loadedLevelName.ToLower().Contains("titlescreen"))
 	    {
 	        this.GetComponent<Animator>().runtimeAnimatorController = this.titleScreenAnimator;
+            this.transform.FindChild("PhotographCanvas").gameObject.SetActive(false);
 	        this.isTitleScreen = true;
 	    }
 	    else

@@ -23,6 +23,9 @@ public class LevelController : MonoBehaviour
 
     public float quipMinTime;
     public float quipMaxTime;
+
+    private bool isTitleScreen;
+
     private Posable[] posables;
 
     public Text timeLeftText;
@@ -36,6 +39,8 @@ public class LevelController : MonoBehaviour
 
         this.photos = new List<Texture>();
         this.posables = GameObject.FindObjectsOfType<Posable>();
+
+        this.isTitleScreen = Application.loadedLevelName.ToLower().Contains("titlescreen");
 
         if (Application.loadedLevelName.ToLower().Contains("titlescreen"))
         {
@@ -90,7 +95,7 @@ public class LevelController : MonoBehaviour
             Application.Quit();
         }
 
-        if (!this.interactionOnPause)
+        if (!this.interactionOnPause && !this.isTitleScreen)
         {
             timeAvailable -= Time.deltaTime;
             this.timeLeftText.text = Math.Floor(timeAvailable) + ":00   ";
