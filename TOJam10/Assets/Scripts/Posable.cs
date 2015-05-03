@@ -40,14 +40,14 @@ public class Posable : Tossable
 
     private Ray debugRay;
 
-    public Target posingTarget;
+    public Target posingTarget { set; private get;}
 
     public Hat expectedHat;
     private Hat currentHat;
 
     public Player player;
 
-    public Animator animator;
+    Animator animator;
 
 
     public override void Start()
@@ -198,7 +198,6 @@ public class Posable : Tossable
     {
         if (this.currentHat != null)
         {
-            Debug.Log("Current hat is " + this.currentHat + "which should be getting thrown.");
 
             this.currentHat.GetComponent<Rigidbody>().isKinematic = false;
             this.currentHat.GetComponent<Collider>().enabled = true;
@@ -213,7 +212,6 @@ public class Posable : Tossable
         }
         else
         {
-            Debug.Log("Equipping new hat: " + hat);
             hat.transform.SetParent(this.transform);
 
             Vector3 hatPos = this.transform.position;
