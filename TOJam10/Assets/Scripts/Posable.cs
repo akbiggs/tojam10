@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Text;
 using Random = UnityEngine.Random;
 
 public enum PosableState 
@@ -296,6 +297,7 @@ public class Posable : Tossable
             if (clothingRack != null)
             {
                 this.skinRenderer.material = this.suitMaterial;
+                this.isNaked = false;
             }
         }
     }
@@ -303,6 +305,11 @@ public class Posable : Tossable
     public override bool isSatisfied()
     {
         Debug.Log("The expected hat is : " + this.expectedHat + " and the current hat is " + this.currentHat);
-        return this.currentHat == this.expectedHat;
+        return this.currentHat == this.expectedHat && !this.isNaked;
+    }
+
+    public override bool IsActive()
+    {
+        return true;
     }
 }

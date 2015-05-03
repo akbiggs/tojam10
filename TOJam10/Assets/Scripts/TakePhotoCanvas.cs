@@ -1,24 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Linq;
 
 public class TakePhotoCanvas : MonoBehaviour {
     public Canvas photograph;
 
-    public Satisfiable[] photoRequirements;
+    private Satisfiable[] photoRequirements;
 
     public Text resultsText;
 
-
 	// Use this for initialization
-	void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
-	
+	void Awake() {
+        this.photoRequirements = GameObject.FindObjectsOfType<Satisfiable>().Where(o => o.IsActive()).ToArray();
 	}
 
     void OnEnable()
@@ -27,15 +22,21 @@ public class TakePhotoCanvas : MonoBehaviour {
         RectTransform rectTransform = this.photograph.GetComponent<RectTransform>();
         rectTransform.localRotation = Quaternion.Euler(new Vector3(0, 0, Random.Range(-10, 10)));
 
-        int countSatisfied = photoRequirements.Where(x => x.isSatisfied()).Count();
+        int countSatisfied = photoRequirements.Count(x => x.isSatisfied());
 
         if (countSatisfied == this.photoRequirements.Length)
         {
             resultsText.text = "Congratulations!\nAll requirements have been satisfied!";
 
-            SoundManager.PlaySound(SoundManager.instance.victorySound, Vector3.zero);
+            Timer.Register(0.5f, () =>
+            {
+                SoundManager.PlaySound(SoundManager.instance.victorySound, Vector3.zero);
 
-            LevelController.instance.wonThisLevel = true;
+                Timer.Register(0.2f, () =>
+                {
+                    LevelController.instance.wonThisLevel = true;
+                });
+            });
         }
         else
         {
