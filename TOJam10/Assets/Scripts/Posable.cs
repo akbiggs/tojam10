@@ -290,16 +290,6 @@ public class Posable : Tossable
             Debug.Log("Equipping a hat.");
             this.Equip(hat);
         }
-
-        if (this.isNaked)
-        {
-            ClothingRack clothingRack = c.gameObject.GetComponent<ClothingRack>();
-            if (clothingRack != null)
-            {
-                this.skinRenderer.material = this.suitMaterial;
-                this.isNaked = false;
-            }
-        }
     }
 
     public override bool isSatisfied()

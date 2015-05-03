@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ClothingRack : MonoBehaviour {
+public class ClothingRack : Satisfiable {
 
 	// Use this for initialization
 	void Start () {
@@ -12,4 +12,15 @@ public class ClothingRack : MonoBehaviour {
 	void Update () {
 	
 	}
+
+    void OnCollisionEnter(Collision collision)
+    {
+        Posable p = collision.gameObject.GetComponent<Posable>();
+        if (p != null && p.isNaked)
+        {
+            p.skinRenderer.material = p.suitMaterial;
+            p.isNaked = false;
+        }
+    }
+
 }
