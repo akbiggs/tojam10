@@ -17,9 +17,9 @@ public enum PosableState
 
 public enum PoseAnimation
 {
-    None,
-    Sassy,
-    Cute
+    None = 0,
+    Sassy = 1,
+    Cute = 2
 }
 
 public class Posable : Tossable
@@ -170,6 +170,7 @@ public class Posable : Tossable
             case PosableState.Posing:
                 this.EnterState(PosableState.Bored, 2f);
                 this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
+                this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(this.wanderDirection, Vector3.up)));
                 break;
 
             default:
@@ -190,6 +191,8 @@ public class Posable : Tossable
         this.poseAnimation = anim;
 
         this.EnterState(PosableState.Posing, this.GetNewPoseTime());
+
+        SoundManager.PlayRandomSound(SoundManager.instance.poseSounds, this.transform.position);
     }
 
     public void BecomeHelpless(Vector3? mousePosition)

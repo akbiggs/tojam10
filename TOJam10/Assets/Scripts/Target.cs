@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
+using Random = UnityEngine.Random;
 
 public class Target : Satisfiable
 {
@@ -23,7 +25,9 @@ public class Target : Satisfiable
 
             this.poseTimer = Timer.Register(timeUntilPoseState, () =>
             {
-                posable.Pose(PoseAnimation.Sassy);
+                int pose = Random.Range(1, Enum.GetValues(typeof (PoseAnimation)).Length);
+
+                posable.Pose((PoseAnimation) pose);
                 posable.posingTarget = this;
 
                 this.poseTimer = null;
