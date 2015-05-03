@@ -285,7 +285,7 @@ public class Posable : Tossable
 
             hat.GetComponent<Rigidbody>().isKinematic = true;
             //hat.GetComponent<Collider>().enabled = false;
-            hat.transform.localPosition = Vector3.zero.SetY(0.5f);
+            hat.transform.localPosition = Vector3.zero.SetY(hat.offsetFromHead);
             hat.transform.localRotation = Quaternion.Euler(new Vector3(270, 90, 0));
 
             this.currentHat = hat;
