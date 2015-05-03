@@ -9,6 +9,8 @@ public class Target : Satisfiable
     public Posable expectedPosable;
     Posable currentPosable;
 
+    public float timeUntilPoseState = 0.3f;
+
     void OnTriggerStay(Collider c)
     {
         Posable posable = c.gameObject.GetComponent<Posable>();
@@ -19,7 +21,7 @@ public class Target : Satisfiable
         {
             this.currentPosable = posable;
 
-            this.poseTimer = Timer.Register(0.5f, () =>
+            this.poseTimer = Timer.Register(timeUntilPoseState, () =>
             {
                 posable.Pose(PoseAnimation.Sassy);
                 posable.posingTarget = this;

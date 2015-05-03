@@ -16,6 +16,7 @@ public enum PosableState
 
 public enum PoseAnimation
 {
+    None,
     Sassy,
     Cute
 }
@@ -42,9 +43,14 @@ public class Posable : Tossable
 
     public Target posingTarget;
 
+    public Hat expectedHat;
+    private Hat currentHat;
+    private Hat tossedHat;
+
+    public Player player;
+
     public Animator animator;
 
-    public Hat currentHat;
 
     public override void Start()
     {
@@ -53,14 +59,19 @@ public class Posable : Tossable
         this.collider = this.GetComponent<BoxCollider>();
         this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
+        this.poseAnimation = PoseAnimation.None;
+
         this.Wander();
     }
 
     public void Update()
     {
-        //Debug.Log("Current state: " + this.state.ToString().ToUpper());
+        Debug.Log("Current state: " + this.state.ToString().ToUpper());
 
-        this.animator.SetBool("Walking", this.state == PosableState.Wandering);
+        this.animator.SetBool("Walking", this.state == PosableState.Wandering || this.state == PosableState.Bored);
+        this.animator.SetBool("Idle", this.state == PosableState.Idle);
+        this.animator.SetBool("PickedUp", this.state == PosableState.Helpless);
+
         this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
         this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
 
@@ -69,7 +80,7 @@ public class Posable : Tossable
             case PosableState.Helpless:
                 if (this.IsGrounded() && this.stateTimer == null)
                 {
-                    this.stateTimer = Timer.Register(1f, this.GoToNextState);
+                    this.stateTimer = Timer.Register(0.5f, this.GoToNextState);
                 }
                 else if (!this.IsGrounded() && this.stateTimer != null)
                 {
@@ -84,11 +95,11 @@ public class Posable : Tossable
                 this.rigidbody.velocity = Vector3.zero;
                 this.rigidbody.AddForceAtPosition(this.wanderDirection * this.wanderSpeed, this.transform.position);
 
-                if (!this.IsGrounded())
-                {
-                    Debug.Log("I'm falling!");
-                    this.BecomeHelpless(null);
-                }
+                //if (!this.IsGrounded())
+                //{
+                //    Debug.Log("I'm falling!");
+                //    this.BecomeHelpless(null);
+                //}
 
                 break;
 
@@ -116,6 +127,7 @@ public class Posable : Tossable
 
     public void GoToNextState()
     {
+
         switch (this.state)
         {
             case PosableState.Wandering:
@@ -134,8 +146,9 @@ public class Posable : Tossable
                 break;
 
             case PosableState.Posing:
-                this.EnterState(PosableState.Bored, 5f);
+                this.EnterState(PosableState.Bored, 2f);
                 this.wanderDirection = (this.transform.position - this.posingTarget.transform.position).SetY(0).normalized * 2;
+                this.poseAnimation = PoseAnimation.None;
                 break;
 
             default:
@@ -187,20 +200,42 @@ public class Posable : Tossable
 
     public bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.01f);
+        return !Input.GetMouseButton(0) && Physics.Raycast(transform.position, -Vector3.up, this.collider.bounds.extents.y + 0.1f);
     }
 
     public void equip(Hat hat)
     {
-        hat.transform.parent = this.transform;
-        
-        Vector3 hatPos = this.transform.position;
-        hatPos.y = this.getYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+        if (hat != this.tossedHat)
+        {
+            if (this.currentHat != null)
+            {
+                Debug.Log("Current hat is " + this.currentHat + "which should be getting thrown.");
+                this.currentHat.GetComponent<Rigidbody>().isKinematic = false;
+                this.currentHat.GetComponent<Collider>().enabled = true;
 
-        hat.GetComponent<Rigidbody>().isKinematic = true;
-        hat.GetComponent<Collider>().enabled = false;
+                this.currentHat.transform.parent = this.transform.parent;
 
-        hat.transform.position = hatPos;
+                this.currentHat.GetComponent<Tossable>().GetTossed(this.transform.forward*4);
+
+                this.currentHat.RestoreParent();
+
+                this.tossedHat = this.currentHat;
+                Timer.Register(0.5f, () => { this.tossedHat = null; });
+                this.currentHat = null;
+            }
+
+            Debug.Log("Equipping new hat: " + hat);
+            hat.transform.SetParent(this.transform);
+
+            Vector3 hatPos = this.transform.position;
+            hatPos.y = this.getYOfHead() + hat.GetComponent<Collider>().bounds.extents.y;
+
+            hat.GetComponent<Rigidbody>().isKinematic = true;
+            hat.GetComponent<Collider>().enabled = false;
+            hat.transform.position = hatPos;
+
+            this.currentHat = hat;
+        }
     }
 
     private float getNewPoseTime()
@@ -221,5 +256,11 @@ public class Posable : Tossable
             Debug.Log("Equipping a hat.");
             this.equip(hat);
         }
+    }
+
+    public override bool isSatisfied()
+    {
+        Debug.Log("The expected hat is : " + this.expectedHat + " and the current hat is " + this.currentHat);
+        return this.currentHat == this.expectedHat;
     }
 }

@@ -35,7 +35,7 @@ public class TakePhotoCanvas : MonoBehaviour {
         }
         else
         {
-            float percent = (float) countSatisfied / this.photoRequirements.Length;
+            float percent = 100 * (float) countSatisfied / this.photoRequirements.Length;
             resultsText.text = "Only " + percent + "% of the requirements have been met.\tKeep trying!";
         }
     }
