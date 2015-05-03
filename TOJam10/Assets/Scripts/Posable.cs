@@ -72,9 +72,13 @@ public class Posable : Tossable
     public bool startsNaked = false;
     public bool needsToBePainted = false;
 
+    private bool currentlyNaked;
+    private bool currentlyPainted;
+
     public Renderer skinRenderer;
     public Material suitMaterial;
     public Material paintMaterial;
+    private Material originalMaterial;
 
     // Rotation we should blend towards.
     private Quaternion _targetRotation = Quaternion.identity;
@@ -88,9 +92,14 @@ public class Posable : Tossable
 
         this.poseAnimation = PoseAnimation.None;
 
+        this.currentlyNaked = this.startsNaked;
+        this.currentlyPainted = !this.needsToBePainted;
+
         this.Wander();
 
         this.PlayRandomQuipAfterTime();
+
+        this.originalMaterial = this.skinRenderer.material; 
     }
 
     public void PlayRandomQuipAfterTime()
@@ -336,6 +345,8 @@ public class Posable : Tossable
         {
             Debug.Log("Equipping a hat.");
             this.Equip(hat);
+
+            return;
         }
 
         if (this.startsNaked)
@@ -344,6 +355,9 @@ public class Posable : Tossable
             if (clothingRack != null)
             {
                 this.skinRenderer.material = this.suitMaterial;
+                this.currentlyNaked = false;
+
+                return;
             }
         }
 
@@ -351,21 +365,43 @@ public class Posable : Tossable
         if (paintCan != null)
         {
             this.skinRenderer.material = this.paintMaterial;
+            this.currentlyPainted = true;
+
+            return;
+        }
+
+        WaterBucket waterBucket = c.gameObject.GetComponent<WaterBucket>();
+        if (waterBucket != null && this.currentlyPainted)
+        {
+            this.skinRenderer.material = this.originalMaterial;
+            this.currentlyPainted = false;
         }
     }
 
     override public int getNumSatisfy()
     {
+        Debug.Log("Checking satisfaction for " + this);
+
         int count = 0;
         if (this.currentHat == this.expectedHat)
+        {
+            Debug.Log("  The hats match");
             count++;
+        }
 
-        if (this.startsNaked && this.skinRenderer.material == this.suitMaterial)
+        if (this.startsNaked && !this.currentlyNaked)
+        {
+            Debug.Log("  The nakedness matches");
             count++;
+        }
 
-        if (this.needsToBePainted && this.skinRenderer.material == this.paintMaterial)
+        if (this.needsToBePainted && this.currentlyPainted)
+        {
+            Debug.Log("  The paint matches.");
             count++;
+        }
 
+        Debug.Log("  expected " + this.getTotalToSatisfy() + " matches and got " + count);
         return count;
     }
 
