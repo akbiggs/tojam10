@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ClothingRack : MonoBehaviour {
+public class PaintCan : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
@@ -12,5 +12,4 @@ public class ClothingRack : MonoBehaviour {
 	void Update () {
 	
 	}
-
 }
