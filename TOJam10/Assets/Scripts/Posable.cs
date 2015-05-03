@@ -66,6 +66,9 @@ public class Posable : Tossable
     public bool startsNaked = false;
     public bool needsToBePainted = false;
 
+    private bool currentlyNaked;
+    private bool currentlyPainted;
+
     public Renderer skinRenderer;
     public Material suitMaterial;
     public Material paintMaterial;
@@ -81,6 +84,9 @@ public class Posable : Tossable
         this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
 
         this.poseAnimation = PoseAnimation.None;
+
+        this.currentlyNaked = this.startsNaked;
+        this.currentlyPainted = !this.needsToBePainted;
 
         this.Wander();
     }
@@ -302,6 +308,7 @@ public class Posable : Tossable
             if (clothingRack != null)
             {
                 this.skinRenderer.material = this.suitMaterial;
+                this.currentlyNaked = false;
             }
         }
 
@@ -309,21 +316,34 @@ public class Posable : Tossable
         if (paintCan != null)
         {
             this.skinRenderer.material = this.paintMaterial;
+            this.currentlyPainted = true;
         }
     }
 
     override public int getNumSatisfy()
     {
+        Debug.Log("Checking satisfaction for " + this);
+
         int count = 0;
         if (this.currentHat == this.expectedHat)
+        {
+            Debug.Log("  The hats match");
             count++;
+        }
 
-        if (this.startsNaked && this.skinRenderer.material == this.suitMaterial)
+        if (this.startsNaked && !this.currentlyNaked)
+        {
+            Debug.Log("  The nakedness matches");
             count++;
+        }
 
-        if (this.needsToBePainted && this.skinRenderer.material == this.paintMaterial)
+        if (this.needsToBePainted && this.currentlyPainted)
+        {
+            Debug.Log("  The paint matches.");
             count++;
+        }
 
+        Debug.Log("  expected " + this.getTotalToSatisfy() + " matches and got " + count);
         return count;
     }
 
