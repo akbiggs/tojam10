@@ -120,7 +120,11 @@ public class LevelController : MonoBehaviour
         Application.LoadLevel(nextGameLevel);
 
         Timer.CancelAllRegisteredTimers();
+    }
 
-
+    public void FadeToNextLevel()
+    {
+        Timer.Register(1, this.NextLevel, false);
+        this.fadeoutCanvas.gameObject.SetActive(true);
     }
 }
