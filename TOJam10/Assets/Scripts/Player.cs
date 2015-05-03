@@ -52,6 +52,10 @@ public class Player : MonoBehaviour
         this.state = PlayerState.Playing;
 
         LevelController.instance.interactionOnPause = this.showStart;
+        if (showStart)
+        {
+            LevelController.instance.timeLeftText.text = "";
+        }
     }
 
     void Start()
