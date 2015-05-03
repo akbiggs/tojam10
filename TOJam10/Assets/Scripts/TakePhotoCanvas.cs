@@ -13,7 +13,7 @@ public class TakePhotoCanvas : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake() {
-        this.photoRequirements = GameObject.FindObjectsOfType<Satisfiable>().Where(o => o.IsActive()).ToArray();
+        this.photoRequirements = GameObject.FindObjectsOfType<Satisfiable>().Where(o => o.getTotalToSatisfy() > 0).ToArray();
 	}
 
     void OnEnable()
@@ -22,9 +22,16 @@ public class TakePhotoCanvas : MonoBehaviour {
         RectTransform rectTransform = this.photograph.GetComponent<RectTransform>();
         rectTransform.localRotation = Quaternion.Euler(new Vector3(0, 0, Random.Range(-10, 10)));
 
-        int countSatisfied = photoRequirements.Count(x => x.isSatisfied());
+        //Returna  total count of the number satisfied
+        int countSatisfied = 0;
+        int countTotal = 0;
+        foreach (Satisfiable sat in this.photoRequirements)
+        {
+            countSatisfied += sat.getNumSatisfy();
+            countTotal += sat.getTotalToSatisfy();
+        }
 
-        if (countSatisfied == this.photoRequirements.Length)
+        if (countSatisfied == countTotal)
         {
             resultsText.text = "Congratulations!\nAll requirements have been satisfied!";
 
@@ -40,7 +47,7 @@ public class TakePhotoCanvas : MonoBehaviour {
         }
         else
         {
-            float percent = 100 * (float) countSatisfied / this.photoRequirements.Length;
+            float percent = 100 * (float)countSatisfied / countTotal;
             resultsText.text = "Only " + percent + "% of the requirements have been met.\tKeep trying!";
         }
     }

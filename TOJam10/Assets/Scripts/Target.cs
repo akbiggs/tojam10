@@ -52,13 +52,13 @@ public class Target : Satisfiable
         }
     }
 
-    public override bool isSatisfied()
+    override public int getNumSatisfy()
     {
-        return (this.currentPosable == this.expectedPosable) && (this.expectedPosable.state == PosableState.Posing);
+        return (this.currentPosable == this.expectedPosable) && (this.expectedPosable.state == PosableState.Posing) ? 1: 0;
     }
 
-    public override bool IsActive()
+    override public int getTotalToSatisfy()
     {
-        return true;
+        return 1;
     }
 }

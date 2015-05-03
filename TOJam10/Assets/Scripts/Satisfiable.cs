@@ -3,10 +3,6 @@ using System.Collections;
 
 public abstract class Satisfiable : MonoBehaviour {
 
-    abstract public bool isSatisfied();
-
-    public virtual bool IsActive()
-    {
-        return false;
-    }
+    abstract public int getNumSatisfy();
+    abstract public int getTotalToSatisfy();
 }

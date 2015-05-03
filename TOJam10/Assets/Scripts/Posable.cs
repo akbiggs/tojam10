@@ -20,7 +20,9 @@ public enum PoseAnimation
 {
     None = 0,
     Sassy = 1,
-    Cute = 2
+    Cute = 2,
+    Smack = 3,
+    Cool = 4
 }
 
 public class Posable : Tossable
@@ -61,10 +63,12 @@ public class Posable : Tossable
 
     public Animator animator;
 
-    public bool isNaked = false;
+    public bool startsNaked = false;
+    public bool needsToBePainted = false;
 
     public Renderer skinRenderer;
     public Material suitMaterial;
+    public Material paintMaterial;
 
     // Rotation we should blend towards.
     private Quaternion _targetRotation = Quaternion.identity;
@@ -91,6 +95,8 @@ public class Posable : Tossable
 
         this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
         this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
+        this.animator.SetBool("Smack", this.poseAnimation == PoseAnimation.Smack);
+        this.animator.SetBool("Cool", this.poseAnimation == PoseAnimation.Cool);
 
         switch (this.state)
         {
@@ -290,25 +296,47 @@ public class Posable : Tossable
             this.Equip(hat);
         }
 
-        if (this.isNaked)
+        if (this.startsNaked)
         {
             ClothingRack clothingRack = c.gameObject.GetComponent<ClothingRack>();
             if (clothingRack != null)
             {
                 this.skinRenderer.material = this.suitMaterial;
-                this.isNaked = false;
             }
+        }
+
+        PaintCan paintCan = c.gameObject.GetComponent<PaintCan>();
+        if (paintCan != null)
+        {
+            this.skinRenderer.material = this.paintMaterial;
         }
     }
 
-    public override bool isSatisfied()
+    override public int getNumSatisfy()
     {
-        Debug.Log("The expected hat is : " + this.expectedHat + " and the current hat is " + this.currentHat);
-        return this.currentHat == this.expectedHat && !this.isNaked;
+        int count = 0;
+        if (this.currentHat == this.expectedHat)
+            count++;
+
+        if (this.startsNaked && this.skinRenderer.material == this.suitMaterial)
+            count++;
+
+        if (this.needsToBePainted && this.skinRenderer.material == this.paintMaterial)
+            count++;
+
+        return count;
     }
 
-    public override bool IsActive()
+    override public int getTotalToSatisfy()
     {
-        return true;
+        int count = 1;
+
+        if (this.startsNaked)
+            count++;
+
+        if (this.needsToBePainted)
+            count++;
+
+        return count;
     }
 }

@@ -26,8 +26,15 @@ public class Tossable : Satisfiable
         this.rigidbody.AddForce(dirAndSpeed.SetY(dirAndSpeed.magnitude * tossHeightFactor) * 1000);
     }
 
-    public override bool isSatisfied()
+
+
+    public override int getNumSatisfy()
     {
-        throw new UnassignedReferenceException();
+        return 0;
+    }
+
+    public override int getTotalToSatisfy()
+    {
+        return 0;
     }
 }
