@@ -75,18 +75,23 @@ public class Player : MonoBehaviour
             Cursor.visible = true;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && !LevelController.instance.interactionOnPause)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("When space was pressed, state was: " + this.state);
 
-            if (LevelController.instance.wonThisLevel) {
+            if (LevelController.instance.wonThisLevel)
+            {
+                LevelController.instance.FadeToNextLevel();
                 Timer.Register(1, LevelController.instance.NextLevel, false);
                 LevelController.instance.fadeoutCanvas.gameObject.SetActive(true);
             }
             else if (this.state == PlayerState.Playing)
             {
-                Debug.Log("SNAP PHOTO");
-                this.SnapPhoto();
+                if (!LevelController.instance.interactionOnPause)
+                {
+                    Debug.Log("SNAP PHOTO");
+                    this.SnapPhoto();
+                }
             }
             else
             {
@@ -96,6 +101,8 @@ public class Player : MonoBehaviour
                 this.snapCamera.enabled = true;
 
                 this.cameraBlur.enabled = false;
+
+                LevelController.instance.interactionOnPause = false;
 
                 Debug.Log("Returning state to : " + this.state);
             }
@@ -116,7 +123,7 @@ public class Player : MonoBehaviour
 
         if (tossable != null)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!LevelController.instance.interactionOnPause && Input.GetMouseButtonDown(0))
             {
                 Hat hat = tossable.GetComponent<Hat>();
                 if (hat != null && hat.owner != null)
@@ -135,23 +142,26 @@ public class Player : MonoBehaviour
             //Cursor.SetCursor(this.cursorDefault, new Vector2(0, 0), CursorMode.Auto);
         }
 
-        if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
+        if (!LevelController.instance.interactionOnPause)
         {
-            this.TossHeldObject();
-        }
-        else if (Input.GetMouseButton(0) && this.heldTossable != null)
-        {
-            this.heldTossable.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            if (Input.GetMouseButtonUp(0) && this.heldTossable != null)
+            {
+                this.TossHeldObject();
+            }
+            else if (Input.GetMouseButton(0) && this.heldTossable != null)
+            {
+                this.heldTossable.GetComponent<Rigidbody>().velocity = Vector3.zero;
 
-            Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
-            Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
+                Vector3 previousMouseWorldPos = this.GetMouseWorldPosition(this.previousMousePosition);
+                Vector3 currentMouseWorldPos = this.GetMouseWorldPosition(this.currentMousePosition);
 
-            this.heldTossable.rigidbody.AddForce((currentMouseWorldPos - previousMouseWorldPos) * 10000);
-            this.heldTossable.rigidbody.position = this.heldTossable.rigidbody.position.SetY(this.holdHeight);
-            this.heldTossable.rigidbody.velocity.Clamp(20);
+                this.heldTossable.rigidbody.AddForce((currentMouseWorldPos - previousMouseWorldPos) * 10000);
+                this.heldTossable.rigidbody.position = this.heldTossable.rigidbody.position.SetY(this.holdHeight);
+                this.heldTossable.rigidbody.velocity.Clamp(20);
 
-            this.previousHeldPosition = this.currentHeldPosition;
-            this.currentHeldPosition = this.heldTossable.transform.position;
+                this.previousHeldPosition = this.currentHeldPosition;
+                this.currentHeldPosition = this.heldTossable.transform.position;
+            }
         }
 	}
 
@@ -219,6 +229,8 @@ public class Player : MonoBehaviour
             SoundManager.PlaySound(SoundManager.instance.cameraShutter, this.transform.position);
 
         });
+
+        LevelController.instance.interactionOnPause = true;
 
         this.state = PlayerState.TakingPhoto;
     }
