@@ -209,6 +209,9 @@ public class Player : MonoBehaviour
             this.flashTimer = null;
 
             this.state = PlayerState.ReviewingPhoto;
+
+            SoundManager.PlaySound(SoundManager.instance.cameraShutter, this.transform.position);
+
         });
 
         this.state = PlayerState.TakingPhoto;
