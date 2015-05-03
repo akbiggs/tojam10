@@ -79,7 +79,9 @@ public class Player : MonoBehaviour
         {
             Debug.Log("When space was pressed, state was: " + this.state);
 
-            if (LevelController.instance.wonThisLevel) {
+            if (LevelController.instance.wonThisLevel)
+            {
+                LevelController.instance.FadeToNextLevel();
                 Timer.Register(1, LevelController.instance.NextLevel, false);
                 LevelController.instance.fadeoutCanvas.gameObject.SetActive(true);
             }

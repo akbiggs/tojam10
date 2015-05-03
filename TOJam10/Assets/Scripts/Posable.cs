@@ -94,7 +94,6 @@ public class Posable : Tossable
 
         this.poseAnimation = PoseAnimation.None;
 
-
         if (this.gameObject.name.ToLower().Contains("female"))
         {
             this.pitch = Random.Range(1.15f, 1.3f);
@@ -268,7 +267,10 @@ public class Posable : Tossable
             .Concat(SoundManager.instance.lonelySounds).Concat(SoundManager.instance.childSounds).ToArray(), this.transform.position);
         //}
 
-        this.quip.pitch = this.pitch;
+        if (this.quip != null)
+        {
+            this.quip.pitch = this.pitch;
+        }
     }
 
     public void Wander()
