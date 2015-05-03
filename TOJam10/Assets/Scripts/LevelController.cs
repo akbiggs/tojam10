@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Random = UnityEngine.Random;
 
 public class LevelController : MonoBehaviour
 {
@@ -19,11 +20,21 @@ public class LevelController : MonoBehaviour
 
     public Canvas fadeoutCanvas;
 
+    public float quipMinTime;
+    public float quipMaxTime;
+    private Posable[] posables;
+
     public virtual void Awake()
     {
         LevelController.instance = this;
 
         this.photos = new List<Texture>();
+        this.posables = GameObject.FindObjectsOfType<Posable>();
+
+        if (Application.loadedLevelName.ToLower().Contains("titlescreen"))
+        {
+            this.PlayRandomQuipAfterTime();
+        }
 
         this.interactionOnPause = true;
         //this.savedPhotoPath = Application.persistentDataPath + "/SavedScreens/";
@@ -39,7 +50,20 @@ public class LevelController : MonoBehaviour
         //    texture.LoadImage(File.ReadAllBytes(fileName));
         //    this.photos.Add(texture);
         //}
+    }
 
+    public void PlayRandomQuipAfterTime()
+    {
+        Posable posable = this.posables[Random.Range(0, this.posables.Length)];
+
+        Timer.Register(Random.Range(this.quipMinTime, this.quipMaxTime), () =>
+        {
+            Debug.Log("Random sound");
+
+            posable.PlayRandomQuip();
+
+            this.PlayRandomQuipAfterTime();
+        });
     }
 
     void Update()

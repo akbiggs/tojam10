@@ -153,8 +153,6 @@ public class Player : MonoBehaviour
             this.previousHeldPosition = this.currentHeldPosition;
             this.currentHeldPosition = this.heldTossable.transform.position;
         }
-
-	    
 	}
 
     private Vector3 GetMouseWorldPosition(Vector3 mousePosition)
