@@ -50,9 +50,6 @@ public class Posable : Tossable
     public float poseMinTime; //How long this person who still posed for at a minimum
     public float poseMaxTime; //How long this person will stay posed for at a maximum.
 
-    public float quipMinTime;
-    public float quipMaxTime;
-    
     private Timer stateTimer;
 
     private Ray debugRay;
@@ -80,6 +77,8 @@ public class Posable : Tossable
     public Material paintMaterial;
     private Material originalMaterial;
 
+    private AudioSource quip;
+
     // Rotation we should blend towards.
     private Quaternion _targetRotation = Quaternion.identity;
 
@@ -97,35 +96,17 @@ public class Posable : Tossable
 
         this.Wander();
 
-        this.PlayRandomQuipAfterTime();
-
         this.originalMaterial = this.skinRenderer.material; 
     }
 
-    public void PlayRandomQuipAfterTime()
-    {
-        Timer.Register(Random.Range(this.quipMinTime, this.quipMaxTime), () =>
-        {
-            Debug.Log("Random sound");
 
-            if (this.gameObject.name.ToLower().Contains("child"))
-            {
-                SoundManager.PlayRandomSound(SoundManager.instance.childSounds, this.transform.position);
-            }
-            else if (this.gameObject.name.ToLower().Contains("alien"))
-            {
-                SoundManager.PlayRandomSound(SoundManager.instance.lonelySounds, this.transform.position);
-            }
-            else
-            {
-                SoundManager.PlayRandomSound(SoundManager.instance.niceHomeSounds, this.transform.position);
-            }
-
-            this.PlayRandomQuipAfterTime();
-        });
-    }
     public void Update()
     {
+        if (this.quip != null && !this.quip.isPlaying)
+        {
+            this.quip = null;
+        }
+
         Debug.Log("Current state: " + this.state.ToString().ToUpper());
 
         this.animator.SetBool("Walking", this.state == PosableState.Wandering || this.state == PosableState.Bored);
@@ -248,7 +229,30 @@ public class Posable : Tossable
         this.rigidbody.velocity = Vector3.zero;
         this.poseAnimation = PoseAnimation.None;
 
+        this.PlayRandomQuip();
+
         this.EnterState(PosableState.Helpless);
+    }
+
+    public void PlayRandomQuip()
+    {
+        if (this.quip != null)
+        {
+            return;
+        }
+
+        if (this.gameObject.name.ToLower().Contains("child"))
+        {
+            this.quip = SoundManager.PlayRandomSound(SoundManager.instance.childSounds, this.transform.position);
+        }
+        else if (this.gameObject.name.ToLower().Contains("alien"))
+        {
+            this.quip = SoundManager.PlayRandomSound(SoundManager.instance.lonelySounds, this.transform.position);
+        }
+        else
+        {
+            this.quip = SoundManager.PlayRandomSound(SoundManager.instance.niceHomeSounds, this.transform.position);
+        }
     }
 
     public void Wander()
