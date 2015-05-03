@@ -57,6 +57,10 @@ public class Posable : Tossable
 
     public Animator animator;
 
+    public bool isNaked = false;
+
+    public Renderer skinRenderer;
+    public Material suitMaterial;
 
     public override void Start()
     {
@@ -86,7 +90,8 @@ public class Posable : Tossable
             case PosableState.Helpless:
                 if (this.IsGrounded() && this.stateTimer == null)
                 {
-                    this.stateTimer = Timer.Register(0.5f, this.GoToNextState);
+                    this.GoToNextState();
+                    //this.stateTimer = Timer.Register(0.5f, this.GoToNextState);
                 }
                 else if (!this.IsGrounded() && this.stateTimer != null)
                 {
@@ -147,9 +152,9 @@ public class Posable : Tossable
                 break;
 
             case PosableState.Helpless:
-                this.rigidbody.rotation = Quaternion.Euler(Vector3.zero);
+                //this.rigidbody.rotation = Quaternion.Euler(Vector3.zero);
 
-                this.Wander();
+                this.Idle();
 
                 break;
 
@@ -264,6 +269,15 @@ public class Posable : Tossable
         {
             Debug.Log("Equipping a hat.");
             this.Equip(hat);
+        }
+
+        if (this.isNaked)
+        {
+            ClothingRack clothingRack = c.gameObject.GetComponent<ClothingRack>();
+            if (clothingRack != null)
+            {
+                this.skinRenderer.material = this.suitMaterial;
+            }
         }
     }
 

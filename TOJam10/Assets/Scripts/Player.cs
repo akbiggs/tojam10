@@ -50,6 +50,8 @@ public class Player : MonoBehaviour
         this.previousMousePosition = this.currentMousePosition = Input.mousePosition;
 
         this.state = PlayerState.Playing;
+
+        LevelController.instance.interactionOnPause = this.showStart;
     }
 
     void Start()
