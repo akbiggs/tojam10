@@ -16,7 +16,8 @@ public enum PosableState
 
 public enum PoseAnimation
 {
-    Flattered
+    Sassy,
+    Cute
 }
 
 public class Posable : Tossable
@@ -41,22 +42,31 @@ public class Posable : Tossable
 
     public Target posingTarget;
 
-    Hat currentHat;
     public Hat expectedHat;
+    private Hat currentHat;
 
     public Player player;
+
+    public Animator animator;
+
 
     public override void Start()
     {
         base.Start();
 
         this.collider = this.GetComponent<BoxCollider>();
+        this.animator = this.transform.FindChild("personModel").GetComponent<Animator>();
+
         this.Wander();
     }
 
     public void Update()
     {
         //Debug.Log("Current state: " + this.state.ToString().ToUpper());
+
+        this.animator.SetBool("Walking", this.state == PosableState.Wandering);
+        this.animator.SetBool("Sass", this.poseAnimation == PoseAnimation.Sassy);
+        this.animator.SetBool("Cute", this.poseAnimation == PoseAnimation.Cute);
 
         switch (this.state)
         {
@@ -157,7 +167,7 @@ public class Posable : Tossable
     {
         Vector2 wanderDir2d = Random.insideUnitCircle.normalized;
         this.wanderDirection = new Vector3(wanderDir2d.x, 0, wanderDir2d.y);
-        this.rigidbody.MoveRotation(Quaternion.LookRotation(wanderDirection));
+        this.rigidbody.MoveRotation(Quaternion.LookRotation(Vector3.Cross(wanderDirection, Vector3.up)));
 
         this.rigidbody.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 

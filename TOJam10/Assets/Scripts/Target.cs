@@ -23,7 +23,7 @@ public class Target : Satisfiable
 
             this.poseTimer = Timer.Register(timeUntilPoseState, () =>
             {
-                posable.Pose(PoseAnimation.Flattered);
+                posable.Pose(PoseAnimation.Sassy);
                 posable.posingTarget = this;
 
                 this.poseTimer = null;
