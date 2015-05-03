@@ -29,7 +29,7 @@ public class LevelController : MonoBehaviour
     private Posable[] posables;
 
     public Text timeLeftText;
-    private float timeAvailable = 11;
+    private float timeAvailable = 31;
 
     public GameObject creepyEnding;
 
