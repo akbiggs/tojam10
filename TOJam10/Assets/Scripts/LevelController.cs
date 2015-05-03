@@ -76,6 +76,11 @@ public class LevelController : MonoBehaviour
             photoReel.transform.position = Vector3.zero;
             //photoReel.transform.SetParent(this.ui.transform);
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     public void AddPhoto(Texture photo)
