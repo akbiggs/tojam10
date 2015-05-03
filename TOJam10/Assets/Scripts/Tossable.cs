@@ -4,7 +4,6 @@ using System.Collections;
 [RequireComponent(typeof(Rigidbody))]
 public class Tossable : Satisfiable
 {
-
     // sets how much the height of the toss is affected by the magnitude of the other axes
     public float tossHeightFactor;
 
@@ -25,8 +24,6 @@ public class Tossable : Satisfiable
         //this.rigidbody.constraints = RigidbodyConstraints.None;
         this.rigidbody.AddForce(dirAndSpeed.SetY(dirAndSpeed.magnitude * tossHeightFactor) * 1000);
     }
-
-
 
     public override int getNumSatisfy()
     {
