@@ -64,6 +64,7 @@ public class Posable : Tossable
 
     public Renderer skinRenderer;
     public Material suitMaterial;
+    public Material paintMaterial;
 
     // Rotation we should blend towards.
     private Quaternion _targetRotation = Quaternion.identity;
