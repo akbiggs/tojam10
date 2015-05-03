@@ -2,7 +2,7 @@
 using System.Collections;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Tossable : MonoBehaviour
+public class Tossable : Satisfiable
 {
 
     // sets how much the height of the toss is affected by the magnitude of the other axes
@@ -22,8 +22,12 @@ public class Tossable : MonoBehaviour
 
     public virtual void GetTossed(Vector3 dirAndSpeed)
     {
-        this.rigidbody.constraints = RigidbodyConstraints.None;
+        //this.rigidbody.constraints = RigidbodyConstraints.None;
         this.rigidbody.AddForce(dirAndSpeed.SetY(dirAndSpeed.magnitude * tossHeightFactor) * 1000);
     }
 
+    public override bool isSatisfied()
+    {
+        throw new UnassignedReferenceException();
+    }
 }
